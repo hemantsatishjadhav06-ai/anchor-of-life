@@ -157,7 +157,7 @@ a:not([class]):hover {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 1.35rem;
   font-weight: 600;
-  color: #000000 !important;                     /* pure black — no override */
+  color: #FAFAF0 !important;                     /* pure black — no override */
   -webkit-text-fill-color: #DE9457 !important;   /* Chrome autofill defeat */
   caret-color: var(--vermilion);                 /* visible red cursor */
   width: 100%;
