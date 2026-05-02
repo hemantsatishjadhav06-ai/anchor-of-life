@@ -60,7 +60,13 @@ a:not([class]):hover {
 /* Devanagari needs slightly more line-height for descenders */
 :lang(hi), [lang="hi"], .lang-hi {
   font-family: var(--font-devanagari), var(--font-sans), serif;
-  line-height: 1.85;
+  line-height: 1.7;
+  font-weight: 500;
+}
+/* Tailwind .font-devanagari class — make sure it carries weight too */
+.font-devanagari {
+  font-family: var(--font-devanagari), serif;
+  font-weight: 500;
 }
 
 .font-display {
@@ -124,16 +130,17 @@ a:not([class]):hover {
     radial-gradient(circle at 75% 65%, rgba(20, 17, 13, 0.025) 0, transparent 55%);
 }
 
-/* Search input — bottom-rule only, not boxy */
+/* Search input — bottom-rule only, not boxy. Always solid ink. */
 .input-rule {
   background: transparent;
   border: 0;
-  border-bottom: 2px solid var(--ink);     /* visible at rest */
+  border-bottom: 2px solid var(--ink);
   outline: none;
   padding: 0.85rem 0;
   font-family: var(--font-display), serif;
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 500;
+  font-style: normal;             /* never italic — typed text stays upright */
   color: var(--ink);
   width: 100%;
   transition: border-color 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -144,20 +151,22 @@ a:not([class]):hover {
 .input-rule::placeholder {
   color: var(--ink-mute);
   font-style: italic;
-  opacity: 0.85;
+  font-weight: 400;
+  opacity: 0.7;
 }
 
-/* Buttons — text with permanent thin underline; thickens on hover */
+/* Buttons — text with permanent ink underline; thickens + reddens on hover */
 .btn-text {
   position: relative;
+  display: inline-block;
   font-family: var(--font-sans), sans-serif;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
   color: var(--ink);
   background: transparent;
   border: 0;
-  padding: 0.4rem 0;
+  padding: 0.4rem 0 0.5rem 0;
   cursor: pointer;
   transition: color 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -165,12 +174,12 @@ a:not([class]):hover {
   content: '';
   position: absolute;
   left: 0; right: 0; bottom: 2px;
-  height: 1px;
-  background: var(--ink-mute);
+  height: 1.5px;
+  background: var(--ink);                /* solid ink, not mute */
   transition: height 200ms cubic-bezier(0.22, 0.61, 0.36, 1), background-color 200ms;
 }
 .btn-text:hover { color: var(--vermilion); }
-.btn-text:hover::after { height: 2px; background: var(--vermilion); }
+.btn-text:hover::after { height: 2.5px; background: var(--vermilion); }
 
 /* Solid button — used sparingly */
 .btn-ink {
@@ -208,11 +217,11 @@ a:not([class]):hover {
 /* Pull quote */
 .pull {
   font-family: var(--font-display), Georgia, serif;
-  font-size: 1.5rem;
-  line-height: 1.45;
+  font-size: 1.4rem;
+  line-height: 1.5;
   color: var(--ink);
   font-style: italic;
-  font-weight: 500;
+  font-weight: 600;             /* heavier so italic doesn't read thin */
   border-left: 3px solid var(--vermilion);
   padding-left: 1.25rem;
   margin: 1.5rem 0;
@@ -220,7 +229,7 @@ a:not([class]):hover {
 .pull.lang-hi {
   font-family: var(--font-devanagari), serif;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* "Sacred" mark — used only for things like quote markers */

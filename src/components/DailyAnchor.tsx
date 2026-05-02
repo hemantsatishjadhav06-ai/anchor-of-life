@@ -78,13 +78,13 @@ export default function DailyAnchor({ lang }: { lang: Lang }) {
             {pick.title}
           </p>
           {pick.excerpt_text && (
-            <p className={`pull ${lang === 'hi' ? 'lang-hi' : ''}`}>
+            <p className={`pull ${/[ऀ-ॿ]/.test(pick.excerpt_text) ? 'lang-hi' : ''}`}>
               {pick.excerpt_text.slice(0, 240)}{pick.excerpt_text.length > 240 ? '…' : ''}
             </p>
           )}
-          <div className="mt-5 flex items-center gap-6">
+          <div className="mt-5 flex flex-wrap items-center gap-6">
             <Link href={`/library/${pick.video_id}?lang=${lang}&t=${pick.excerpt_start}`} className="btn-text">
-              {lang === 'hi' ? 'पूरी शिक्षा पढ़ें' : 'Read this teaching'}
+              {lang === 'hi' ? 'पूरी शिक्षा पढ़ें' : 'Read this teaching'} →
             </Link>
             <a href={url} target="_blank" rel="noopener" className="btn-text">
               {lang === 'hi' ? 'YouTube पर देखें' : 'Watch on YouTube'} ↗

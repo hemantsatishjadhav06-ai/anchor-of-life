@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Fraunces, Tiro_Devanagari_Sanskrit, Mukta } from 'next/font/google';
+import { Fraunces, Noto_Serif_Devanagari, Mukta } from 'next/font/google';
 import './globals.css';
 
 const display = Fraunces({
@@ -12,10 +12,11 @@ const display = Fraunces({
   axes: ['opsz', 'SOFT'],
 });
 
-const devanagari = Tiro_Devanagari_Sanskrit({
+// Noto Serif Devanagari has weights 100–900 — necessary so weight:500/600
+// in our CSS actually renders thicker. Tiro only shipped weight 400.
+const devanagari = Noto_Serif_Devanagari({
   subsets: ['devanagari', 'latin'],
-  weight: ['400'],
-  style: ['normal', 'italic'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-devanagari',
   display: 'swap',
 });
