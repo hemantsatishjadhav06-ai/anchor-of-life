@@ -1,149 +1,168 @@
-# Anchor of Life · ब्रजेश गौतम
+# Anchor of Life · जीवन का आधार
 
-A digital archive of Shri Brajesh Gautam ji's recorded teachings — every video transcribed, every concept indexed, every answer cited back to the exact second on YouTube. Bilingual (Hindi & English). Editorial design, not chatbot chrome.
+A bilingual digital archive of **Shri Brajesh Gautam's** recorded teachings.
+Ask anything in Hindi or English — the AI answers from his actual videos, with the embedded clip at the exact second and a verbatim quote.
 
 > *"Thirty years of teachings. Ask anything — he has likely already answered."*
 
-## What's in here
+---
 
-- **The Library** — 280 video teachings, 610,000 segment-level transcripts, 70,000 semantic chunks.
-- **Ask Brajesh ji** — semantic search over the corpus → Claude composes a folio-style answer with the **embedded YouTube clip at the exact timestamp**, the **verbatim quote**, and links to the source.
-- **Knowledge graph** — 1,082 concept nodes / 918 edges / 58 substantive topic clusters (built via [graphify](https://github.com/safishamsi/graphify), a separate run on the curated 48 transcripts).
-- **8 life-situation cards** on the homepage — auto-derived from the graph's communities.
-- **Fully searchable transcript drawer** on every video page, click any line to seek the player.
+## What's in the archive
+
+- **285 video teachings** ingested across Jyotish Vidya, Anchor of Life, When Ananda Speaks, and Sanatan series
+- **610,155 transcript segments** with sub-second timestamps
+- **69,838 semantic chunks** embedded (1,536-dim, OpenRouter / OpenAI text-embedding-3-small)
+- **1,082 concept-graph nodes** built via [graphify](https://github.com/safishamsi/graphify), 918 edges, 58 substantive topic clusters
+- **480 hours / 5.1 million words** of recorded teaching, all searchable in either language
+
+## What it does well
+
+**Hybrid retrieval — 12/12 eval pass.** Three rankers in parallel:
+
+| Ranker | Signal | Why it matters |
+|---|---|---|
+| Lexical (SQLite FTS5) | BM25 over titles + segment text, with bilingual alias expansion | Mars-titled video wins for a Mars question |
+| Concept-graph | Query → matched concept node → videos that primarily teach that concept | Authoritativeness — not just "any video that mentions it" |
+| Semantic (sqlite-vec) | Embedding KNN, K=32 | Catches the questions where neither title nor concept matches |
+
+Fused via Reciprocal Rank Fusion + a multiplicative title boost + a canonical-title bonus. See [`docs/ADR-001`](docs/ADR-001-hybrid-retrieval.md) for the full architecture decision.
+
+**In-depth answers in BG's voice.** Each answer is a 4-section folio (~280–450 words):
+
+1. Empathic opener (one sentence acknowledging the human situation)
+2. Core teaching from the primary source
+3. **BG across his teachings** — 2–3 angles drawn from different videos, each cited
+4. What to do (only when sources contain a concrete practice)
+
+Each answer surfaces:
+- An **embedded YouTube clip** at the exact timestamp BG said the cited words
+- The **verbatim quote** as a pull quote (drop cap, vermilion left rule)
+- All 3–4 source videos, each clickable
+- The lens (inner / jyotish / practice) that the answer engages
+- "Brajesh ji has spoken about this in N teachings"
 
 ## Stack
 
 | Layer | Choice | Why |
 |---|---|---|
-| Framework | Next.js 14 (App Router, TS) | Server components mean the homepage queries SQLite directly — no API hops. |
-| Styling | Tailwind v3 + custom design tokens | Editorial palette (paper / ink / one vermilion accent). No gradients. |
-| Typography | Fraunces (Latin display) · Tiro Devanagari Sanskrit · Mukta | Bilingual peer pairing. Devanagari treated as a first-class script, not a translation. |
-| Database | SQLite + better-sqlite3 + sqlite-vec | One file. Trivial to back up. Vector search built in. |
-| Embeddings | `openai/text-embedding-3-small` via OpenRouter | Multilingual; 1,536 dim. |
-| LLM | `anthropic/claude-sonnet-4.5` via OpenRouter | Composes the folio answer. One key for both. |
-
-One API key (OpenRouter) for everything. No separate OpenAI/Anthropic accounts needed.
+| Framework | Next.js 14 (App Router · TypeScript) | Server components query SQLite directly — no API hops |
+| Styling | Tailwind v3 + custom design tokens | Editorial paper-and-ink palette. No gradients. |
+| Typography | Fraunces · Tiro Devanagari Sanskrit · Mukta | Bilingual peer pairing, Devanagari treated as a first-class script |
+| Database | SQLite + better-sqlite3 + sqlite-vec + FTS5 | One file. Trivial to back up. Vector + lexical in one. |
+| Embeddings | `openai/text-embedding-3-small` via OpenRouter | Multilingual, 1,536 dim, $0.02/1M tokens |
+| Composer LLM | `anthropic/claude-sonnet-4.5` via OpenRouter | One API key for embeddings + chat |
+| Hosting | Fly.io (Mumbai) + Cloudflare R2 + Cloudflare DNS | $5/mo all-in. Zero egress on R2. |
 
 ## Project layout
 
 ```
 anchor-of-life/
-├── data/                       # SQLite database (gitignored). Single file.
+├── data/                       SQLite DB (gitignored). 540 MB once built.
+├── docs/
+│   └── ADR-001-…               Architecture decision record
 ├── scripts/
-│   ├── 01-build-db.ts          # CREATE TABLE…
-│   ├── 02-ingest-videos.ts     # manifest.csv → videos
-│   ├── 03-ingest-segments.ts   # transcripts_json/*.json → segments + chunks
-│   ├── 04-embed-segments.ts    # OpenRouter → 1,536-dim embeddings
-│   ├── 05-ingest-graph.ts      # graphify graph.json → concepts + communities
-│   └── 99-stats.ts             # quick health check
+│   ├── 01-build-db.ts          schema
+│   ├── 02-ingest-videos.ts     manifest.csv → videos
+│   ├── 03-ingest-segments.ts   transcripts → segments + chunks
+│   ├── 04-embed-segments.ts    chunks → 1,536-dim vectors via OpenRouter
+│   ├── 05-ingest-graph.ts      graphify graph.json → concepts + 8 cards
+│   ├── 06-build-fts.ts         FTS5 indexes
+│   ├── eval.ts                 12-query regression set
+│   ├── bootstrap.ts            production bootstrap (downloads DB from R2)
+│   ├── upload-to-r2.ts         data:upload → R2
+│   └── 99-stats.ts
 ├── src/
-│   ├── app/                    # Next App Router routes & pages
-│   │   ├── page.tsx            # Homepage (hero + daily anchor + 8 cards + library teaser)
-│   │   ├── ask/page.tsx        # /ask?q=… (folio answer view)
-│   │   ├── library/            # /library and /library/[id] (video page with transcript drawer)
-│   │   ├── topic/[slug]/       # /topic/relationships, /topic/karma-fate-…
-│   │   ├── about/              # About Brajesh ji + SNOW + disclaimers
-│   │   └── api/
-│   │       ├── ask/            # POST: question → embed → search → compose → JSON envelope
-│   │       ├── library/        # GET: paginated list
-│   │       ├── topic/[slug]/   # GET: concepts + videos for a community
-│   │       ├── video/[id]/     # GET: full transcript + concepts
-│   │       ├── daily/          # GET: today's anchor clip
-│   │       └── cards/          # GET: 8 life-situation cards
-│   ├── components/             # Header, Footer, SearchBox, FolioAnswer, etc.
+│   ├── app/                    7 routes + 6 API endpoints
+│   │   └── api/ask/            POST: hybrid search → compose folio
+│   ├── components/             Header, Hero, FolioAnswer, TranscriptDrawer, …
 │   └── lib/
-│       ├── db.ts               # sqlite-vec singleton
-│       ├── openrouter.ts       # embed() + chat() with retries
-│       ├── search.ts           # vector search → group → cite
-│       ├── compose.ts          # Claude folio composer (system prompt is the heart)
-│       ├── i18n.ts             # bilingual strings
-│       ├── youtube.ts          # timestamp/embed URL helpers
-│       └── vec.ts              # Float32 BLOB ↔ number[] codec
+│       ├── search.ts           hybrid retrieval (RRF + 3 rankers)
+│       ├── compose.ts          Claude folio composer
+│       ├── aliases.ts          bilingual alias table + stop-words
+│       ├── openrouter.ts       embed() + chat() with retries
+│       ├── db.ts               sqlite-vec singleton
+│       └── …
+├── Dockerfile                  multi-stage build for Fly
+├── fly.toml                    Mumbai region, persistent volume, auto-stop
 └── README.md (this file)
 ```
 
-## Run it locally
+## Running locally
 
 ```bash
-# 1. install
+# 1. install deps
 npm install
 
-# 2. add your OpenRouter key to .env.local (already present here)
+# 2. add OpenRouter key to .env.local (see .env.example)
 #    OPENROUTER_API_KEY=sk-or-…
 
-# 3. build the database (one-time, ~20 minutes for embeddings)
+# 3. build the database (one-time, ~25 minutes total)
 npm run db:build       # schema
-npm run db:videos      # 285 video metadata rows from manifest.csv
+npm run db:videos      # 285 video metadata rows
 npm run db:segments    # 610k segments + 70k chunks
-npm run db:embed       # ← the slow one. ~$0.10 in OpenRouter credits.
-npm run db:graph       # graphify graph.json → 1k concepts + 8 cards
+npm run db:embed       # ~$0.10 in OpenRouter credits, ~15 min
+npm run db:graph       # 1,082 concepts + 8 cards
+npm run db:fts         # FTS5 indexes
 
-# 4. dev server
+# Or all at once:
+npm run db:all
+
+# 4. run the regression eval
+npm run eval           # should print 12/12 PASS
+
+# 5. dev server
 npm run dev
 # → http://localhost:3000
-
-# Health check at any time
-npm run db:stats
 ```
 
-The embedding step is resumable — `chunks.embedded` is tracked per row, so killing and restarting `npm run db:embed` picks up where it left off.
+## Production deploy (Fly.io)
 
-## How "Ask Brajesh ji" works
-
-1. **You type a question** (Hindi or English — the system auto-detects).
-2. **Embed the question** with `text-embedding-3-small`.
-3. **Vector search** the chunks table → top 16 matches.
-4. **Group by video** → pick best chunk per video → top 4 unique videos.
-5. **Pull verbatim quotes** from the original Whisper segments around each match (so the citation is BG's actual words, not a chunk-window approximation).
-6. **Detect related topic clusters** by joining hits → concept_videos → topics.
-7. **Claude composes** a folio answer in the user's language, citing sources by `{{cite:N}}` markers, disclosing the lens (inner / jyotish / practice).
-8. **Render the folio**: question · answer with footnote markers · embedded YouTube clip starting at the exact second · the verbatim quote pull · related sources · related topics.
-
-If the corpus doesn't contain enough to answer, the system says so plainly. It never invents.
-
-## Design system
-
-**Editorial. Not chatbot.**
-
-- Paper-and-ink palette. `#F8F4EC` parchment, `#1F1B16` warm ink, **one** vermilion `#B83227` accent reserved for sacred/citation markers.
-- Three-font system: Latin display (Fraunces), Devanagari serif (Tiro Devanagari Sanskrit), UI sans (Mukta — handles both scripts for labels).
-- Drop caps on first paragraph of folio answers. Pull quotes with vermilion left rule. No iMessage chat bubbles. No "AI typing" indicators.
-- Generous whitespace. Slow editorial transitions (`cubic-bezier(0.22, 0.61, 0.36, 1)`).
-- Devanagari numerals available via setting (planned). Hindi and English given equal weight on every page.
-
-Reference points: Rekhta, Hindwi, NYT Magazine, Met Museum collection. Anti-references: pi.ai, Co-Star, any "spiritual AI" app on the App Store.
-
-## Deploy
-
-The database is ~600MB once fully embedded — too large for Vercel functions. Recommended targets:
-
-**Fly.io** (best fit — single small VM with persistent volume)
 ```bash
-fly launch
+# 1. Cloudflare R2: create bucket, get API token (free tier covers this)
+#    Add to .env.local:
+#      R2_ACCOUNT_ID=, R2_BUCKET=anchoroflife,
+#      R2_ACCESS_KEY_ID=, R2_SECRET_ACCESS_KEY=
+
+# 2. Upload DB + transcripts to R2
+npm run data:upload
+
+# 3. Fly launch
+fly launch  # uses fly.toml; pick Mumbai
 fly volumes create anchor_data --size 2 --region bom
-# mount /data, set DB_PATH=/data/anchor.db
-# upload the prebuilt anchor.db once with: fly ssh sftp shell
+fly secrets set \
+  OPENROUTER_API_KEY=sk-or-… \
+  R2_ACCOUNT_ID=… \
+  R2_BUCKET=anchoroflife \
+  R2_ACCESS_KEY_ID=… \
+  R2_SECRET_ACCESS_KEY=…
+
 fly deploy
+# Bootstrap downloads anchor.db from R2 on first boot.
+
+# 4. Domain (Cloudflare Registrar): point CNAME → Fly. SSL automatic.
 ```
 
-**Render** — also works. Persistent disk, Node web service.
+Total cost: ~$5/month (Fly $3 + R2 $0.01 + domain $0.85).
 
-**Cloudflare Pages + D1** — possible but requires migrating from SQLite-with-vec to D1 + a vector store like Vectorize.
+## Safety + privacy
 
-The `data/anchor.db` file is the entire datastore. Back it up with `cp`. Restore by replacing the file. That's the deployment promise.
+- **Crisis detection** on every query — patterns for self-harm/suicide intent route to a hotline response (India: iCall, Vandrevala, AASRA, KIRAN) instead of running the AI.
+- **No accounts. No tracking.** No Google Analytics. No 3rd-party cookies. Privacy-respecting analytics (Plausible/Umami) recommended for production.
+- **Rate limit:** 30 requests / hour / IP on `/api/ask`. Prevents API key drain.
+- **Answer cache:** 24h hash-keyed cache. Cuts LLM bill ~80% in steady state.
+- **Honest "I don't know"** — composer is instructed to refuse to invent. If sources lack the answer, the response says so plainly.
+- **No remedy fabrication** — if BG didn't state a remedy in a cited source, the answer points to a personal consultation rather than inventing one.
 
 ## Honest limits
 
-- Whisper makes mistakes on Hindi/Hinglish. Some quotes contain transcription noise. There's no easy fix without re-transcribing with better models.
-- Answers are drawn from BG's *recorded* teachings only. They don't account for what he might say to *you specifically* — for that, book a real consultation.
-- Auto-generated remedy claims are gated on having a real source citation. The composer is instructed to refuse to invent remedies. If sources don't contain a remedy, the answer says so.
-- The graph was run on the curated 48 transcripts (Anchor of Life + Jyotish Vidya), not the full 285. The remaining transcripts are still in the search index — but only the 48 contributed concept tags. Run `/graphify --update` on the rest to expand the graph layer when needed.
+- Whisper transcription has noise on dense Hindi/Hinglish — some quotes will read rough. A future pass with WhisperX-large or a learned correction dictionary would clean this.
+- The 8 homepage life-situation cards were seeded from the curated 48-transcript graphify run, not the full 285. Run `/graphify --update` on the rest to expand.
+- Personal-consultation paths (chart reading, specific remedies for a person) deliberately route to BG's real consultation. The AI doesn't pretend to do those.
 
 ## Credits
 
-- **Teachings:** © Shri Brajesh Gautam. Used here for educational reference with full timestamped citations.
-- **Trust:** [Spiritual Nectar of Wisdom (SNOW)](https://www.spiritualnectorofwisdom.org/), India + Canada.
-- **Source channel:** [The Anchor of Life with Brajesh Gautam](https://www.youtube.com/@officialbrajeshgautam) on YouTube.
+- **Teachings** © Shri Brajesh Gautam. Used for educational reference with full timestamped citations.
+- **Trust:** [Spiritual Nectar of Wisdom (SNOW)](https://www.spiritualnectorofwisdom.org/) — non-profit, India + Canada.
+- **Source channel:** [The Anchor of Life with Brajesh Gautam](https://www.youtube.com/@officialbrajeshgautam)
 
 May this archive outlast all of us. That is the intention.
