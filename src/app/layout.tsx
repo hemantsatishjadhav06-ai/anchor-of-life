@@ -4,7 +4,8 @@ import './globals.css';
 
 const display = Fraunces({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  // No `weight` — Fraunces is variable, supports any weight 100-900.
+  // `axes: ['opsz', 'SOFT']` requires omitting weight per next/font.
   style: ['normal', 'italic'],
   variable: '--font-display',
   display: 'swap',
