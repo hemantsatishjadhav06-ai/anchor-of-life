@@ -4,6 +4,7 @@ import { detectLang } from '@/lib/vec';
 import { hybridSearch, buildCitationsFromVideos, relatedTopicsForVideos, countMentionsHybrid } from '@/lib/search';
 import { composeFolio } from '@/lib/compose';
 import { getDb } from '@/lib/db';
+import { expandAliases } from '@/lib/aliases';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -137,6 +138,21 @@ export async function POST(req: NextRequest) {
     total_mentions,
     matched_concepts: result.matched_concepts,
   });
+
+  // Server-side safety override: if the user's question contains a strong
+  // canonical concept (e.g., "mars", "saturn", "pitr dosh") AND Source 1's
+  // title contains a form of that concept, force Source 1 as primary.
+  // This protects against composer drift — the embedded clip should be the
+  // most authoritative video on the topic, which is what the retrieval ranker
+  // already selected as Source 1.
+  const aliases = expandAliases(body.question);
+  if (aliases.canonical.length && citations.length) {
+    const titleHay = (citations[0].title || '').toLowerCase();
+    const hit = aliases.forms.some(f => f.length >= 3 && titleHay.includes(f.toLowerCase()));
+    if (hit && envelope.primary_citation_index !== 1) {
+      envelope.primary_citation_index = 1;
+    }
+  }
 
   CACHE[ckey] = { at: Date.now(), data: envelope };
   return NextResponse.json(envelope, { headers: { 'X-Cache': 'MISS' } });
