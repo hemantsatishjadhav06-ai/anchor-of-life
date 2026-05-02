@@ -4,10 +4,11 @@ import './globals.css';
 
 const display = Fraunces({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['300', '400', '450', '500', '600', '700', '800'],
   style: ['normal', 'italic'],
   variable: '--font-display',
   display: 'swap',
+  axes: ['opsz', 'SOFT'],
 });
 
 const devanagari = Tiro_Devanagari_Sanskrit({

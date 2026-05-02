@@ -138,16 +138,17 @@ export default function FolioAnswer({ question, lang }: Props) {
       <aside className="lg:sticky lg:top-8 lg:self-start reveal-up">
         <p className="citation-meta mb-3">{STR.youAsked[lang]}</p>
         <p className={`pull ${lang === 'hi' ? 'lang-hi' : ''}`}>{question}</p>
-        <div className="mt-6 space-y-2 text-xs text-ink-mute uppercase tracking-wider">
+        <div className="mt-6 space-y-2.5 text-[0.78rem] text-ink-soft uppercase tracking-[0.12em] font-semibold">
           {data.total_mentions > 0 && (
             <p className="leading-relaxed">
+              <span className="text-vermilion">›</span>{' '}
               {lang === 'hi'
-                ? `ब्रजेश जी ने इस विषय पर ${data.total_mentions} शिक्षाओं में चर्चा की है।`
-                : `Brajesh ji has spoken about this in ${data.total_mentions} teachings.`}
+                ? `ब्रजेश जी ने इस पर ${data.total_mentions} शिक्षाओं में चर्चा की है`
+                : `${data.total_mentions} teachings touch this`}
             </p>
           )}
           {lensLabels.length > 0 && (
-            <p>{lang === 'hi' ? 'दृष्टिकोण: ' : 'Lens: '}{lensLabels.join(' + ')}</p>
+            <p><span className="text-vermilion">›</span> {lang === 'hi' ? 'दृष्टिकोण: ' : 'Lens: '}{lensLabels.join(' + ')}</p>
           )}
         </div>
       </aside>
@@ -175,13 +176,13 @@ export default function FolioAnswer({ question, lang }: Props) {
         </section>
 
         {/* In Brajesh ji's words */}
-        <section className="mt-12 pl-6 border-l-2 border-vermilion reveal-up reveal-delay-3">
-          <p className="citation-meta mb-3">{STR.brajeshJiSays[lang]}</p>
-          <blockquote className={`font-display text-xl leading-relaxed text-ink ${lang === 'hi' || /[ऀ-ॿ]/.test(cite.quote) ? 'font-devanagari' : 'italic'}`}>
-            <span className="text-vermilion mr-1">❝</span>{cite.quote}<span className="text-vermilion ml-1">❞</span>
+        <section className="mt-12 pl-6 border-l-[3px] border-vermilion reveal-up reveal-delay-3 bg-paper-deep/40 py-5 pr-5">
+          <p className="citation-meta mb-3 text-vermilion-deep">{STR.brajeshJiSays[lang]}</p>
+          <blockquote className={`font-display text-[1.35rem] leading-[1.5] text-ink font-medium ${lang === 'hi' || /[ऀ-ॿ]/.test(cite.quote) ? 'font-devanagari font-medium' : 'italic'}`}>
+            <span className="text-vermilion mr-1 not-italic">❝</span>{cite.quote}<span className="text-vermilion ml-1 not-italic">❞</span>
           </blockquote>
-          <p className="mt-3 text-sm text-ink-mute">
-            — {STR.at[lang]} {formatTime(cite.start_sec)} {STR.in[lang]} <Link href={`/library/${cite.video_id}?lang=${lang}&t=${cite.start_sec}`} className="italic underline-offset-4 hover:underline">{cite.title}</Link>
+          <p className="mt-4 text-sm text-ink-soft font-medium">
+            — {STR.at[lang]} <span className="font-mono text-ink">{formatTime(cite.start_sec)}</span> {STR.in[lang]} <Link href={`/library/${cite.video_id}?lang=${lang}&t=${cite.start_sec}`} className="italic underline underline-offset-4 decoration-ink-mute hover:decoration-vermilion hover:decoration-2 hover:text-vermilion">{cite.title}</Link>
           </p>
         </section>
 

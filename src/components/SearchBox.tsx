@@ -45,20 +45,18 @@ export default function SearchBox({ lang, autoFocus = false, initial = '' }: { l
         />
         <span className="absolute right-0 bottom-3 text-ink-mute text-xs uppercase tracking-wider pointer-events-none">↵</span>
       </div>
-      <div className="mt-3 text-xs text-ink-mute uppercase tracking-wider">
-        {lang === 'hi' ? 'या पूछिए' : 'or try'}:
-        <span className="ml-2 normal-case tracking-normal text-ink-soft">
-          {hints.slice(0, 3).map((h, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => { setQ(h); setTimeout(() => submit(), 0); }}
-              className={`mr-3 hover:text-ink underline-offset-4 hover:underline ${lang === 'hi' ? 'font-devanagari' : 'italic'}`}
-            >
-              "{h}"
-            </button>
-          ))}
-        </span>
+      <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-2 text-[0.78rem] text-ink-mute tracking-[0.12em] uppercase font-semibold">
+        <span>{lang === 'hi' ? 'या पूछिए' : 'or try'}</span>
+        {hints.slice(0, 3).map((h, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => { setQ(h); setTimeout(() => submit(), 0); }}
+            className={`normal-case tracking-normal text-ink-soft hover:text-vermilion underline underline-offset-[5px] decoration-ink-mute decoration-[1px] hover:decoration-vermilion hover:decoration-2 transition-colors font-normal ${lang === 'hi' ? 'font-devanagari' : 'italic'}`}
+          >
+            "{h}"
+          </button>
+        ))}
       </div>
     </form>
   );

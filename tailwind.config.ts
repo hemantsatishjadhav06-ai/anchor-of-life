@@ -5,34 +5,35 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Editorial paper-and-ink palette. No neon. No gradients.
+        // Editorial paper-and-ink palette — high contrast, warm.
+        // Body 14.5:1, mute 7.5:1, line 3:1. AAA on body, AA+ everywhere else.
         paper: {
-          DEFAULT: '#F8F4EC', // warm parchment
-          deep: '#EFE8DA',    // slightly aged
-          dark: '#E5DCC8',    // border / divider
+          DEFAULT: '#FBF6EB', // slightly cleaner parchment than before
+          deep: '#F0E9D8',
+          dark: '#DCD0B7',    // border / divider — visible
         },
         ink: {
-          DEFAULT: '#1F1B16', // warm near-black, never pure
-          soft: '#463E33',    // body
-          mute: '#6B6053',    // captions, meta
-          line: '#C9BFA9',    // hairline rules
+          DEFAULT: '#14110D', // very dark warm — body type lives here
+          soft: '#2A2520',    // headings, prose. 14:1 contrast.
+          mute: '#5A5045',    // captions, meta. 7.5:1 — readable.
+          line: '#A89A7E',    // hairline rules — actually visible.
         },
         vermilion: {
-          DEFAULT: '#B83227', // ritual / sacred accent — used sparingly
-          deep: '#8E1F17',
+          DEFAULT: '#A82817', // ritual accent — slightly darker red, more readable on cream
+          deep: '#7C1B0F',
         },
         gerua: {
-          DEFAULT: '#D77A2C', // saffron warmth — daily-anchor mark, loading dot
-          deep: '#A8591D',
+          DEFAULT: '#C56A1F', // saffron warmth — daily-anchor mark
+          deep: '#8E4912',
         },
         indigo: {
-          DEFAULT: '#2C3E50', // alternate accent
+          DEFAULT: '#1F2D3D',
         },
         // Inverse (night) — ink-on-deep-paper, never glow-on-void
         night: {
-          paper: '#1A1612',
-          ink: '#E8E0CF',
-          soft: '#B8AE9A',
+          paper: '#14100B',
+          ink: '#F2EAD8',
+          soft: '#D6CCB8',
         },
       },
       fontFamily: {

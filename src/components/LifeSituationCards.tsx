@@ -58,19 +58,19 @@ export default function LifeSituationCards({ lang }: { lang: Lang }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-2">
         {cards.map(c => (
           <Link key={c.slug} href={`/topic/${c.slug}?lang=${lang}`} className="card-quiet group">
-            <div className="flex items-baseline justify-between">
-              <p className="font-display text-[1.55rem] leading-tight text-ink group-hover:text-vermilion transition-colors">
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="font-display text-[1.6rem] leading-tight text-ink font-medium group-hover:text-vermilion transition-colors">
                 {lang === 'hi' ? c.label_hi : c.label_en}
               </p>
-              <span className="citation-meta whitespace-nowrap ml-3 mt-1">
-                {c.video_count} {lang === 'hi' ? 'शिक्षाएँ' : 'teachings'}
+              <span className="citation-meta whitespace-nowrap mt-1 text-ink-soft">
+                {c.video_count}
               </span>
             </div>
-            <p className="mt-2 text-sm text-ink-mute leading-relaxed">
+            <p className="mt-2.5 text-[0.95rem] text-ink-soft leading-relaxed font-medium">
               {lang === 'hi' ? c.description_hi : c.description_en}
             </p>
             {c.top_concepts.length > 0 && (
-              <p className="mt-3 text-[0.78rem] text-ink-mute italic line-clamp-1">
+              <p className="mt-3 text-[0.8rem] text-ink-mute italic line-clamp-1 font-medium">
                 {c.top_concepts.slice(0, 3).join(' · ')}
               </p>
             )}

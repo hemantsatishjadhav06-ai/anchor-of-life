@@ -30,7 +30,7 @@ export default function Hero({ lang, stats }: { lang: Lang; stats: { videos: num
             )}
           </h1>
 
-          <p className="mt-7 text-ink-soft text-lg md:text-xl leading-relaxed max-w-prose font-display">
+          <p className="mt-7 text-ink text-lg md:text-xl leading-relaxed max-w-prose font-display font-medium">
             {lang === 'hi'
               ? 'तीस वर्षों की शिक्षाएँ। कुछ भी पूछिए — वे शायद उत्तर दे चुके हैं।'
               : 'Thirty years of teachings. Ask anything — he has likely already answered.'}
@@ -40,31 +40,31 @@ export default function Hero({ lang, stats }: { lang: Lang; stats: { videos: num
             <SearchBox lang={lang} autoFocus />
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-mute uppercase tracking-wider">
+          <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.78rem] text-ink-mute uppercase tracking-[0.14em] font-semibold">
             <span>~{stats.hours} {lang === 'hi' ? 'घंटे' : 'hours'}</span>
             <span className="text-ink-line">/</span>
             <span>{stats.videos} {lang === 'hi' ? 'शिक्षाएँ' : 'teachings'}</span>
             <span className="text-ink-line">/</span>
-            <span className="font-devanagari normal-case tracking-normal">हिंदी &amp; English</span>
+            <span className="font-devanagari normal-case tracking-normal text-ink-soft">हिंदी &amp; English</span>
           </div>
         </div>
 
         {/* Right: portrait */}
-        <div className="relative aspect-[800/1028] max-w-sm mx-auto lg:max-w-none lg:mx-0 reveal-up reveal-delay-1">
+        <div className="relative aspect-[800/1028] max-w-sm mx-auto lg:max-w-none lg:mx-0 reveal-up reveal-delay-1 border-2 border-ink/85">
           <Image
             src="/img/brajesh-portrait.jpg"
             alt="Shri Brajesh Gautam"
             fill
             sizes="(min-width: 1024px) 32vw, 80vw"
-            className="object-cover grayscale-[0.15] mix-blend-multiply"
+            className="object-cover"
             priority
           />
-          {/* Caption strip — like a museum label */}
-          <div className="absolute -bottom-1 left-0 right-0 bg-paper border-t border-ink-line/60 px-3 py-2">
-            <p className="citation-meta text-[0.68rem]">
+          {/* Caption strip — museum label */}
+          <div className="absolute bottom-0 left-0 right-0 bg-paper border-t-2 border-ink/85 px-3 py-2">
+            <p className="citation-meta text-[0.68rem] text-ink-soft">
               {lang === 'hi' ? 'ब्रजेश गौतम जी' : 'Brajesh Gautam ji'}
-              <span className="mx-2 text-ink-line">·</span>
-              {lang === 'hi' ? 'ज्योतिषाचार्य · आध्यात्मिक मार्गदर्शक' : 'astrologer · spiritual mentor'}
+              <span className="mx-2 text-ink-mute">·</span>
+              <span className="text-ink-mute">{lang === 'hi' ? 'ज्योतिषाचार्य · आध्यात्मिक मार्गदर्शक' : 'astrologer · spiritual mentor'}</span>
             </p>
           </div>
         </div>
