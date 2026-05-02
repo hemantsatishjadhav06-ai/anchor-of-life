@@ -147,9 +147,9 @@ a:not([class]):hover {
     radial-gradient(circle at 75% 65%, rgba(20, 17, 13, 0.025) 0, transparent 55%);
 }
 
-/* Search input — sans-serif for readability of typed text */
+/* Search input — bulletproof solid-ink text, fully visible placeholder */
 .input-rule {
-  background: transparent;
+  background: var(--paper) !important;          /* defeat any inherited bg */
   border: 0;
   border-bottom: 2px solid var(--ink);
   outline: none;
@@ -157,7 +157,9 @@ a:not([class]):hover {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 1.35rem;
   font-weight: 600;
-  color: var(--ink);
+  color: #000000 !important;                     /* pure black — no override */
+  -webkit-text-fill-color: #000000 !important;   /* Chrome autofill defeat */
+  caret-color: var(--vermilion);                 /* visible red cursor */
   width: 100%;
   transition: border-color 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -166,10 +168,23 @@ a:not([class]):hover {
   border-bottom-width: 3px;
 }
 .input-rule::placeholder {
-  color: var(--ink-mute);
-  font-weight: 400;
+  color: var(--ink-mute) !important;
+  -webkit-text-fill-color: var(--ink-mute) !important;
+  font-weight: 500;
   font-style: normal;
-  opacity: 0.85;
+  opacity: 1;                                    /* fully solid, no fade */
+}
+
+/* Defeat Chrome autofill yellow/blue background + white text */
+.input-rule:-webkit-autofill,
+.input-rule:-webkit-autofill:hover,
+.input-rule:-webkit-autofill:focus,
+input:-webkit-autofill {
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--paper) inset !important;
+  background-color: var(--paper) !important;
+  caret-color: var(--vermilion) !important;
+  transition: background-color 99999s ease-in-out 0s;
 }
 
 /* Buttons — text with permanent ink underline; thickens + reddens on hover */
@@ -253,13 +268,13 @@ a:not([class]):hover {
 /* "Sacred" mark — used only for things like quote markers */
 .mark-vermilion { color: var(--vermilion); }
 
-/* Citations — small caps. Now ink-soft (darker than mute), bold. */
+/* Citations — small caps. Pure ink for max visibility. */
 .citation-meta {
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.78rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-soft);          /* was ink-mute — now noticeably darker */
+  color: #1A1A1A;                  /* almost-pure black, not warm-toned */
   font-weight: 700;
 }
 

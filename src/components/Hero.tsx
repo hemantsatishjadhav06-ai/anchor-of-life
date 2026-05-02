@@ -40,12 +40,12 @@ export default function Hero({ lang, stats }: { lang: Lang; stats: { videos: num
             <SearchBox lang={lang} autoFocus />
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.78rem] text-ink-mute uppercase tracking-[0.14em] font-semibold">
+          <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.8rem] text-ink uppercase tracking-[0.14em] font-bold">
             <span>~{stats.hours} {lang === 'hi' ? 'घंटे' : 'hours'}</span>
             <span className="text-ink-line">/</span>
             <span>{stats.videos} {lang === 'hi' ? 'शिक्षाएँ' : 'teachings'}</span>
             <span className="text-ink-line">/</span>
-            <span className="font-devanagari normal-case tracking-normal text-ink-soft">हिंदी &amp; English</span>
+            <span className="font-devanagari normal-case tracking-normal text-ink">हिंदी &amp; English</span>
           </div>
         </div>
 
