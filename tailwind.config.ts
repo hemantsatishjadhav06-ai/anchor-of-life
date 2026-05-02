@@ -5,35 +5,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Editorial paper-and-ink palette — high contrast, warm.
-        // Body 14.5:1, mute 7.5:1, line 3:1. AAA on body, AA+ everywhere else.
+        // Maximum-contrast editorial palette. Near-black on near-white.
         paper: {
-          DEFAULT: '#FBF6EB', // slightly cleaner parchment than before
-          deep: '#F0E9D8',
-          dark: '#DCD0B7',    // border / divider — visible
+          DEFAULT: '#FAFAF5',
+          deep: '#F0EDE3',
+          dark: '#D7D0BD',
         },
         ink: {
-          DEFAULT: '#14110D', // very dark warm — body type lives here
-          soft: '#2A2520',    // headings, prose. 14:1 contrast.
-          mute: '#5A5045',    // captions, meta. 7.5:1 — readable.
-          line: '#A89A7E',    // hairline rules — actually visible.
+          DEFAULT: '#0A0805',  // 19:1 contrast on paper — AAA
+          soft: '#1F1A14',     // 16:1 — AAA
+          mute: '#4A4337',     // 9:1 — AAA on body, AA on small
+          line: '#8C8273',     // 4:1 — visible hairline
         },
         vermilion: {
-          DEFAULT: '#A82817', // ritual accent — slightly darker red, more readable on cream
-          deep: '#7C1B0F',
+          DEFAULT: '#962412',
+          deep: '#6E180A',
         },
         gerua: {
-          DEFAULT: '#C56A1F', // saffron warmth — daily-anchor mark
-          deep: '#8E4912',
+          DEFAULT: '#B05A18',
+          deep: '#7A3E0F',
         },
         indigo: {
           DEFAULT: '#1F2D3D',
         },
-        // Inverse (night) — ink-on-deep-paper, never glow-on-void
         night: {
-          paper: '#14100B',
-          ink: '#F2EAD8',
-          soft: '#D6CCB8',
+          paper: '#0A0805',
+          ink: '#FAFAF0',
+          soft: '#DED7C5',
         },
       },
       fontFamily: {

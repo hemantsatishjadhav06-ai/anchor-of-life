@@ -45,16 +45,16 @@ export default function SearchBox({ lang, autoFocus = false, initial = '' }: { l
         />
         <span className="absolute right-0 bottom-3 text-ink-mute text-xs uppercase tracking-wider pointer-events-none">↵</span>
       </div>
-      <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-2 text-[0.8rem] text-ink-mute tracking-[0.12em] uppercase font-bold">
+      <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-2 text-[0.78rem] text-ink-soft tracking-[0.14em] uppercase font-bold">
         <span>{lang === 'hi' ? 'या पूछिए' : 'or try'}</span>
         {hints.slice(0, 3).map((h, i) => (
           <button
             key={i}
             type="button"
             onClick={() => { setQ(h); setTimeout(() => submit(), 0); }}
-            className={`normal-case tracking-normal text-ink hover:text-vermilion underline underline-offset-[5px] decoration-ink decoration-[1.5px] hover:decoration-vermilion hover:decoration-2 transition-colors font-medium ${lang === 'hi' ? 'font-devanagari' : 'font-display'}`}
+            className={`normal-case tracking-normal text-ink hover:text-vermilion underline underline-offset-[5px] decoration-ink decoration-2 hover:decoration-vermilion transition-colors font-semibold ${lang === 'hi' ? 'font-devanagari' : ''}`}
           >
-            “{h}”
+            {h}
           </button>
         ))}
       </div>

@@ -30,7 +30,7 @@ export default function Hero({ lang, stats }: { lang: Lang; stats: { videos: num
             )}
           </h1>
 
-          <p className="mt-7 text-ink text-lg md:text-xl leading-relaxed max-w-prose font-display font-medium">
+          <p className={`mt-7 text-ink text-lg md:text-xl leading-relaxed max-w-prose font-semibold ${lang === 'hi' ? 'font-devanagari' : ''}`}>
             {lang === 'hi'
               ? 'तीस वर्षों की शिक्षाएँ। कुछ भी पूछिए — वे शायद उत्तर दे चुके हैं।'
               : 'Thirty years of teachings. Ask anything — he has likely already answered.'}

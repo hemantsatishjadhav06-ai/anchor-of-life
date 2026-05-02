@@ -3,27 +3,29 @@
 @tailwind utilities;
 
 :root {
-  /* High-contrast editorial palette. AAA on body. */
-  --paper: #FBF6EB;
-  --paper-deep: #F0E9D8;
-  --ink: #14110D;             /* body lives here — strong */
-  --ink-soft: #2A2520;        /* headings, secondary prose */
-  --ink-mute: #5A5045;        /* captions, meta — readable */
-  --ink-line: #A89A7E;        /* hairlines — visible, not invisible */
-  --vermilion: #A82817;
-  --gerua: #C56A1F;
+  /* MAXIMUM contrast palette. Pure black ink on near-white paper. */
+  --paper: #FAFAF5;           /* very light warm white — almost white */
+  --paper-deep: #F0EDE3;
+  --ink: #0A0805;             /* near-black, faintest warm tint */
+  --ink-soft: #1F1A14;
+  --ink-mute: #4A4337;        /* mute is now darker than before */
+  --ink-line: #8C8273;        /* hairlines clearly visible */
+  --vermilion: #962412;        /* deeper red for stronger contrast */
+  --gerua: #B05A18;
   color-scheme: light;
+  /* Force light mode regardless of OS preference — keeps reading consistent */
 }
 
+/* Dark mode disabled deliberately — light editorial only.
+   Honors user OS, but uses our same high-contrast inverted palette. */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Inverse: ink-on-deep-paper. Strong contrast preserved. */
-    --paper: #14100B;
-    --paper-deep: #1F1A13;
-    --ink: #F2EAD8;
-    --ink-soft: #D6CCB8;
-    --ink-mute: #9D9181;
-    --ink-line: #4A4030;
+    --paper: #0A0805;
+    --paper-deep: #16110A;
+    --ink: #FAFAF0;
+    --ink-soft: #DED7C5;
+    --ink-mute: #A39888;
+    --ink-line: #4A4233;
     --vermilion: #E07261;
     --gerua: #DE9457;
     color-scheme: dark;
@@ -36,10 +38,19 @@ html, body {
 }
 
 body {
-  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'ss01' 1, 'ss02' 1, 'opsz' 1;
+  font-family: var(--font-sans), 'Mukta', system-ui, sans-serif;  /* sans by default */
+  font-weight: 500;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  color: var(--ink);
+}
+
+/* Display class — apply explicitly where you want Fraunces serif */
+.font-display {
+  font-family: var(--font-display), Georgia, 'Times New Roman', serif !important;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'opsz' 1, 'ss01' 1;
 }
 
 /* Default link affordance — visible underline that thickens on hover */
@@ -78,15 +89,15 @@ a:not([class]):hover {
   font-family: var(--font-devanagari), serif;
 }
 
-/* Editorial drop cap for first paragraph in folio answer */
+/* Editorial drop cap — Fraunces serif for the dramatic opening letter only */
 .folio-prose > p:first-of-type::first-letter {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), Georgia, 'Times New Roman', serif;
   float: left;
-  font-size: 4.6em;
+  font-size: 5em;
   line-height: 0.82;
   padding-right: 0.08em;
-  padding-top: 0.06em;
-  font-weight: 600;
+  padding-top: 0.04em;
+  font-weight: 700;
   color: var(--ink);
 }
 
@@ -99,21 +110,27 @@ a:not([class]):hover {
   font-family: inherit;
 }
 
+/* Folio body — sans-serif Mukta for high legibility, large size */
 .folio-prose p {
-  font-family: var(--font-display), Georgia, serif;
-  font-size: 1.18rem;
+  font-family: var(--font-sans), 'Mukta', system-ui, sans-serif;
+  font-size: 1.15rem;
   line-height: 1.7;
-  color: var(--ink);             /* full ink for body — high contrast */
-  font-weight: 500;              /* slightly heavier than 400 — Fraunces variable */
+  color: var(--ink);
+  font-weight: 500;
   margin-bottom: 1.15em;
-  font-feature-settings: 'kern' 1, 'liga' 1, 'opsz' 1, 'onum' 1;
 }
 .folio-prose.lang-hi p {
-  font-family: var(--font-devanagari), serif;
-  line-height: 1.95;
+  font-family: var(--font-devanagari), 'Noto Serif Devanagari', serif;
+  line-height: 1.85;
   font-weight: 500;
 }
-.folio-prose em { font-style: italic; color: var(--ink); font-weight: 500; }
+.folio-prose em {
+  /* Mukta has no italic — switch to display font for emphasis */
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--ink);
+}
 .folio-prose strong { font-weight: 700; color: var(--ink); }
 
 /* Hairline rule */
@@ -130,29 +147,29 @@ a:not([class]):hover {
     radial-gradient(circle at 75% 65%, rgba(20, 17, 13, 0.025) 0, transparent 55%);
 }
 
-/* Search input — bottom-rule only, not boxy. Always solid ink. */
+/* Search input — sans-serif for readability of typed text */
 .input-rule {
   background: transparent;
   border: 0;
   border-bottom: 2px solid var(--ink);
   outline: none;
-  padding: 0.85rem 0;
-  font-family: var(--font-display), serif;
-  font-size: 1.4rem;
-  font-weight: 500;
-  font-style: normal;             /* never italic — typed text stays upright */
+  padding: 0.9rem 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
   color: var(--ink);
   width: 100%;
   transition: border-color 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .input-rule:focus {
   border-bottom-color: var(--vermilion);
+  border-bottom-width: 3px;
 }
 .input-rule::placeholder {
   color: var(--ink-mute);
-  font-style: italic;
   font-weight: 400;
-  opacity: 0.7;
+  font-style: normal;
+  opacity: 0.85;
 }
 
 /* Buttons — text with permanent ink underline; thickens + reddens on hover */
@@ -214,20 +231,21 @@ a:not([class]):hover {
 }
 .card-quiet:hover::before { width: 30%; }
 
-/* Pull quote */
+/* Pull quote — keep serif for editorial feel, weight 600, deeper bg tint */
 .pull {
   font-family: var(--font-display), Georgia, serif;
   font-size: 1.4rem;
   line-height: 1.5;
   color: var(--ink);
   font-style: italic;
-  font-weight: 600;             /* heavier so italic doesn't read thin */
+  font-weight: 600;
   border-left: 3px solid var(--vermilion);
-  padding-left: 1.25rem;
+  padding: 0.5rem 0 0.5rem 1.25rem;
   margin: 1.5rem 0;
+  background: linear-gradient(to right, rgba(150, 36, 18, 0.04), transparent 30%);
 }
 .pull.lang-hi {
-  font-family: var(--font-devanagari), serif;
+  font-family: var(--font-devanagari), 'Noto Serif Devanagari', serif;
   font-style: normal;
   font-weight: 600;
 }
@@ -235,14 +253,14 @@ a:not([class]):hover {
 /* "Sacred" mark — used only for things like quote markers */
 .mark-vermilion { color: var(--vermilion); }
 
-/* Citations — small caps, readable mute */
+/* Citations — small caps. Now ink-soft (darker than mute), bold. */
 .citation-meta {
-  font-family: var(--font-sans), sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 0.78rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-mute);
-  font-weight: 600;
+  color: var(--ink-soft);          /* was ink-mute — now noticeably darker */
+  font-weight: 700;
 }
 
 /* Slow, deliberate motion */
