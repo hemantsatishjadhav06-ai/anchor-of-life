@@ -5,7 +5,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 build-essential ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json* ./
-RUN npm ci --omit=optional
+# IMPORTANT: do NOT use --omit=optional — sqlite-vec ships its native Linux binary
+# as an optional dependency (sqlite-vec-linux-x64). Skipping it breaks runtime.
+RUN npm ci
 
 FROM node:20-bookworm-slim AS builder
 WORKDIR /app

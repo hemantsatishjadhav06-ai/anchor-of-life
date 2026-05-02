@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 // Pick a deterministic "today's anchor" — a curated, well-known teaching.
 // Algorithm: rank videos by (a) being a known signature title, (b) having distinctive concepts,
