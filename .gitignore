@@ -1,0 +1,14 @@
+node_modules
+.next
+.env
+.env.local
+.env.*.local
+data/*
+!data/.gitkeep
+*.log
+*.tsbuildinfo
+.DS_Store
+out/
+dist/
+build/
+graphify-input/

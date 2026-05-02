@@ -1,0 +1,2 @@
+# anchor.db lives here in dev. In prod it's at /data/anchor.db (see fly.toml).
+# Bootstrap script downloads it from R2 if missing.

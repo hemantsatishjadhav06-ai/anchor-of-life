@@ -1,0 +1,44 @@
+{
+  "name": "anchor-of-life",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "db:build": "tsx scripts/01-build-db.ts",
+    "db:videos": "tsx scripts/02-ingest-videos.ts",
+    "db:segments": "tsx scripts/03-ingest-segments.ts",
+    "db:embed": "tsx scripts/04-embed-segments.ts",
+    "db:graph": "tsx scripts/05-ingest-graph.ts",
+    "db:fts": "tsx scripts/06-build-fts.ts",
+    "db:all": "npm run db:build && npm run db:videos && npm run db:segments && npm run db:embed && npm run db:graph && npm run db:fts",
+    "db:stats": "tsx scripts/99-stats.ts",
+    "eval": "tsx scripts/eval.ts",
+    "data:upload": "tsx scripts/upload-to-r2.ts",
+    "bootstrap": "tsx scripts/bootstrap.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.703.0",
+    "better-sqlite3": "^11.8.1",
+    "next": "14.2.18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sqlite-vec": "^0.1.6",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^16.4.7",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

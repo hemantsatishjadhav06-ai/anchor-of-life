@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #F8F4EC;
+  --paper-deep: #EFE8DA;
+  --ink: #1F1B16;
+  --ink-soft: #463E33;
+  --ink-mute: #6B6053;
+  --ink-line: #C9BFA9;
+  --vermilion: #B83227;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Inverse: ink-on-deep-paper. Never glow-on-void. */
+    --paper: #1A1612;
+    --paper-deep: #221C16;
+    --ink: #E8E0CF;
+    --ink-soft: #B8AE9A;
+    --ink-mute: #8A8073;
+    --ink-line: #3A322A;
+    --vermilion: #C8625A;
+    color-scheme: dark;
+  }
+}
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'ss01' 1, 'ss02' 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Devanagari needs slightly more line-height for descenders */
+:lang(hi), [lang="hi"], .lang-hi {
+  font-family: var(--font-devanagari), var(--font-sans), serif;
+  line-height: 1.85;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'opsz' 1, 'ss01' 1;
+}
+
+.font-devanagari {
+  font-family: var(--font-devanagari), serif;
+}
+
+/* Editorial drop cap for first paragraph in folio answer */
+.folio-prose > p:first-of-type::first-letter {
+  font-family: var(--font-display), Georgia, serif;
+  float: left;
+  font-size: 4.2em;
+  line-height: 0.85;
+  padding-right: 0.08em;
+  padding-top: 0.06em;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.folio-prose > p:first-of-type:lang(hi)::first-letter,
+.folio-prose.lang-hi > p:first-of-type::first-letter {
+  /* Drop caps don't work cleanly on Devanagari conjuncts — disable. */
+  font-size: inherit;
+  float: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.folio-prose p {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  margin-bottom: 1.1em;
+}
+.folio-prose.lang-hi p {
+  font-family: var(--font-devanagari), serif;
+  line-height: 1.95;
+}
+.folio-prose em { font-style: italic; color: var(--ink); }
+.folio-prose strong { font-weight: 600; color: var(--ink); }
+
+/* Hairline rule */
+.rule {
+  border: 0;
+  border-top: 1px solid var(--ink-line);
+  margin: 2.5rem 0;
+}
+
+/* Subtle paper grain */
+.paper-grain {
+  background-image:
+    radial-gradient(circle at 25% 35%, rgba(70, 62, 51, 0.025) 0, transparent 60%),
+    radial-gradient(circle at 75% 65%, rgba(70, 62, 51, 0.02) 0, transparent 60%);
+}
+
+/* Search input — bottom-rule only, not boxy */
+.input-rule {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink-line);
+  outline: none;
+  padding: 0.85rem 0;
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  color: var(--ink);
+  width: 100%;
+  transition: border-color 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.input-rule:focus {
+  border-bottom-color: var(--vermilion);
+}
+.input-rule::placeholder { color: var(--ink-mute); font-style: italic; }
+
+/* Buttons — text-only, ink underline on hover */
+.btn-text {
+  position: relative;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  padding: 0.4rem 0;
+  cursor: pointer;
+  transition: color 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.btn-text::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 250ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.btn-text:hover::after { transform: scaleX(1); }
+
+/* Solid button — used sparingly */
+.btn-ink {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  padding: 0.7rem 1.25rem;
+  border-radius: 0;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  transition: background 200ms;
+}
+.btn-ink:hover { background: var(--ink-soft); }
+
+/* Card — quiet border, no shadow, hover reveals a thin rule */
+.card-quiet {
+  background: transparent;
+  border-top: 1px solid var(--ink-line);
+  padding: 1.6rem 0 1.4rem 0;
+  transition: padding 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.card-quiet:hover { /* subtle */ }
+
+/* Pull quote */
+.pull {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.4rem;
+  line-height: 1.55;
+  color: var(--ink);
+  font-style: italic;
+  border-left: 2px solid var(--vermilion);
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+}
+.pull.lang-hi {
+  font-family: var(--font-devanagari), serif;
+  font-style: normal;
+}
+
+/* "Sacred" mark — used only for things like quote markers */
+.mark-vermilion { color: var(--vermilion); }
+
+/* Citations — small caps, mute */
+.citation-meta {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Slow, deliberate motion */
+* { transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1); }
