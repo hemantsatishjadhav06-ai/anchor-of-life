@@ -33,5 +33,6 @@ RUN mkdir -p /data
 
 EXPOSE 3000
 
-# Bootstrap downloads anchor.db from R2 on first boot, then starts Next.
-CMD ["sh", "-c", "node --experimental-vm-modules ./node_modules/tsx/dist/cli.mjs scripts/bootstrap.ts && npm start"]
+# Bootstrap downloads anchor.db (R2 → GitHub Release fallback) on first boot,
+# then starts Next.
+CMD ["sh", "-c", "npx tsx scripts/bootstrap.ts && npm start"]

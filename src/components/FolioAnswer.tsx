@@ -7,7 +7,6 @@ import type { AnswerEnvelope, Citation, Lang } from '@/lib/types';
 import { STR } from '@/lib/i18n';
 
 function renderAnswerWithCites(answer: string, citations: Citation[], onCiteClick: (i: number) => void) {
-  // Split on {{cite:N}}; render N as a small superscript link.
   const parts: Array<{ text: string; cite?: number }> = [];
   const re = /\{\{cite:(\d+)\}\}/g;
   let last = 0; let m: RegExpExecArray | null;
@@ -18,7 +17,6 @@ function renderAnswerWithCites(answer: string, citations: Citation[], onCiteClic
   }
   if (last < answer.length) parts.push({ text: answer.slice(last) });
 
-  // Convert markdown to JSX (very light: paragraphs + italic + bold)
   const blocks: JSX.Element[] = [];
   let buf: Array<JSX.Element | string> = [];
   let key = 0;
@@ -34,18 +32,16 @@ function renderAnswerWithCites(answer: string, citations: Citation[], onCiteClic
           <button
             type="button"
             onClick={() => onCiteClick(p.cite! - 1)}
-            className="ml-0.5 text-vermilion font-sans text-[0.72em] hover:underline focus:outline-none"
+            className="cite-marker ml-0.5 font-sans text-[0.72em] focus:outline-none"
             aria-label={`Source ${p.cite}`}
           >[{p.cite}]</button>
         </sup>
       );
       continue;
     }
-    // Split on double-newline for paragraphs
     const subs = p.text.split(/\n\n+/);
     subs.forEach((sub, i) => {
       if (i > 0) flushPara();
-      // light markdown for italic/bold
       const tokens = sub.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
       for (const tk of tokens) {
         if (!tk) continue;
@@ -59,10 +55,7 @@ function renderAnswerWithCites(answer: string, citations: Citation[], onCiteClic
   return blocks;
 }
 
-interface Props {
-  question: string;
-  lang: Lang;
-}
+interface Props { question: string; lang: Lang; }
 
 export default function FolioAnswer({ question, lang }: Props) {
   const [data, setData] = useState<AnswerEnvelope | null>(null);
@@ -71,8 +64,7 @@ export default function FolioAnswer({ question, lang }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    setData(null);
-    setError(null);
+    setData(null); setError(null);
     fetch('/api/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -92,7 +84,7 @@ export default function FolioAnswer({ question, lang }: Props) {
 
   if (error) {
     return (
-      <div className="max-w-folio mx-auto py-16">
+      <div className="max-w-folio mx-auto py-16 reveal-up">
         <p className="text-ink-soft">{lang === 'hi' ? 'क्षमा करें — एक त्रुटि हुई।' : 'Sorry — something went wrong.'}</p>
         <p className="text-ink-mute text-sm mt-2 italic">{error}</p>
       </div>
@@ -103,7 +95,7 @@ export default function FolioAnswer({ question, lang }: Props) {
     return (
       <div className="max-w-folio mx-auto py-16">
         <div className="flex items-center gap-3 text-ink-mute">
-          <span className="inline-block w-2 h-2 rounded-full bg-vermilion animate-pulse" />
+          <span className="inline-block w-2 h-2 rounded-full bg-gerua daily-breath" />
           <span className="text-sm uppercase tracking-wider">{STR.loading[lang]}</span>
         </div>
         <div className="mt-8 space-y-4">
@@ -111,6 +103,7 @@ export default function FolioAnswer({ question, lang }: Props) {
           <div className="h-3 bg-paper-deep rounded w-full" />
           <div className="h-3 bg-paper-deep rounded w-5/6" />
           <div className="h-3 bg-paper-deep rounded w-3/4" />
+          <div className="h-3 bg-paper-deep rounded w-2/3" />
         </div>
       </div>
     );
@@ -118,7 +111,7 @@ export default function FolioAnswer({ question, lang }: Props) {
 
   if (!data.answer_md || !data.citations.length) {
     return (
-      <div className="max-w-folio mx-auto py-12">
+      <div className="max-w-folio mx-auto py-12 reveal-up">
         <p className="citation-meta mb-3">{STR.youAsked[lang]}</p>
         <p className={`pull ${lang === 'hi' ? 'lang-hi' : ''}`}>{question}</p>
         <hr className="rule" />
@@ -140,102 +133,97 @@ export default function FolioAnswer({ question, lang }: Props) {
   if (data.lens.practice) lensLabels.push(lang === 'hi' ? 'अभ्यास' : 'practice');
 
   return (
-    <article className="max-w-folio mx-auto pb-20">
-      {/* Question */}
-      <header>
+    <article className="folio-grid pb-20 max-w-wide mx-auto">
+      {/* Left rail: question + meta (sticky on desktop) */}
+      <aside className="lg:sticky lg:top-8 lg:self-start reveal-up">
         <p className="citation-meta mb-3">{STR.youAsked[lang]}</p>
         <p className={`pull ${lang === 'hi' ? 'lang-hi' : ''}`}>{question}</p>
-        <div className="mt-4 flex items-center gap-3 text-xs text-ink-mute uppercase tracking-wider">
+        <div className="mt-6 space-y-2 text-xs text-ink-mute uppercase tracking-wider">
           {data.total_mentions > 0 && (
-            <span>
+            <p className="leading-relaxed">
               {lang === 'hi'
-                ? `ब्रजेश जी ने इस विषय पर ${data.total_mentions} शिक्षाओं में चर्चा की है`
-                : `Brajesh ji has spoken about this in ${data.total_mentions} teachings`}
-            </span>
+                ? `ब्रजेश जी ने इस विषय पर ${data.total_mentions} शिक्षाओं में चर्चा की है।`
+                : `Brajesh ji has spoken about this in ${data.total_mentions} teachings.`}
+            </p>
           )}
           {lensLabels.length > 0 && (
-            <>
-              <span className="text-ink-line">·</span>
-              <span>{lensLabels.join(' + ')}</span>
-            </>
+            <p>{lang === 'hi' ? 'दृष्टिकोण: ' : 'Lens: '}{lensLabels.join(' + ')}</p>
           )}
         </div>
-      </header>
+      </aside>
 
-      <hr className="rule" />
-
-      {/* Answer body */}
-      <div className={`folio-prose ${lang === 'hi' ? 'lang-hi' : ''}`}>
-        {renderAnswerWithCites(data.answer_md, data.citations, setActiveCite)}
-      </div>
-
-      {/* Embedded primary clip */}
-      <section className="mt-8 -mx-2 md:mx-0">
-        <div className="aspect-video w-full bg-paper-deep border border-ink-line/60">
-          <iframe
-            src={ytEmbedUrl(cite.video_id, cite.start_sec, cite.end_sec)}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-            title={cite.title}
-          />
+      {/* Center: answer body + clip + quote */}
+      <main>
+        <div className={`folio-prose ${lang === 'hi' ? 'lang-hi' : ''}`}>
+          {renderAnswerWithCites(data.answer_md, data.citations, setActiveCite)}
         </div>
-        <p className="mt-3 citation-meta">
-          {STR.source[lang]} [{activeCite + 1}] · <span className="font-display normal-case tracking-normal text-ink-soft italic">{cite.title}</span> · {formatTime(cite.start_sec)}
-        </p>
-      </section>
 
-      {/* In Brajesh ji's words — verbatim quote */}
-      <section className="mt-10 pl-6 border-l-2 border-vermilion">
-        <p className="citation-meta mb-3">{STR.brajeshJiSays[lang]}</p>
-        <blockquote className={`font-display text-xl leading-relaxed text-ink ${lang === 'hi' || /[ऀ-ॿ]/.test(cite.quote) ? 'font-devanagari' : 'italic'}`}>
-          <span className="text-vermilion mr-1">❝</span>{cite.quote}<span className="text-vermilion ml-1">❞</span>
-        </blockquote>
-        <p className="mt-3 text-sm text-ink-mute">
-          — {STR.at[lang]} {formatTime(cite.start_sec)} {STR.in[lang]} <Link href={`/library/${cite.video_id}?lang=${lang}&t=${cite.start_sec}`} className="italic underline-offset-4 hover:underline">{cite.title}</Link>
-        </p>
-      </section>
-
-      {/* Other citations */}
-      {data.citations.length > 1 && (
-        <section className="mt-12">
-          <p className="citation-meta mb-4">
-            {lang === 'hi' ? 'अन्य संदर्भ' : 'Other sources'}
-          </p>
-          <ul className="space-y-3">
-            {data.citations.map((c, i) => i !== Math.max(0, data.primary_citation_index - 1) && (
-              <li key={i}>
-                <button
-                  onClick={() => setActiveCite(i)}
-                  className={`text-left ${i === activeCite ? 'text-vermilion' : 'text-ink-soft hover:text-ink'} transition-colors`}
-                >
-                  <span className="citation-meta mr-2">[{i + 1}]</span>
-                  <span className="font-display italic">{c.title}</span>
-                  <span className="text-ink-mute text-sm ml-2">at {formatTime(c.start_sec)}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {/* Related topics */}
-      {data.related_topics.length > 0 && (
-        <section className="mt-14 border-t border-ink-line/60 pt-8">
-          <p className="citation-meta mb-3">{STR.alsoExplore[lang]}</p>
-          <div className="flex flex-wrap gap-x-4 gap-y-2">
-            {data.related_topics.map(t => (
-              <span key={t} className="font-display italic text-ink-soft">{t}</span>
-            ))}
+        {/* Embedded primary clip — break the grid by being full-width inside the center column */}
+        <section className="mt-10 reveal-up reveal-delay-3">
+          <div className="aspect-video w-full bg-paper-deep border border-ink-line/60 overflow-hidden">
+            <iframe
+              src={ytEmbedUrl(cite.video_id, cite.start_sec, cite.end_sec)}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+              title={cite.title}
+            />
           </div>
+          <p className="mt-3 citation-meta">
+            {STR.source[lang]} [{activeCite + 1}] · <span className="font-display normal-case tracking-normal text-ink-soft italic">{cite.title}</span> · {formatTime(cite.start_sec)}
+          </p>
         </section>
-      )}
 
-      {/* Disclaimer */}
-      <hr className="rule" />
-      <p className="text-xs text-ink-mute leading-relaxed max-w-prose">
-        {STR.disclaimer[lang]}
-      </p>
+        {/* In Brajesh ji's words */}
+        <section className="mt-12 pl-6 border-l-2 border-vermilion reveal-up reveal-delay-3">
+          <p className="citation-meta mb-3">{STR.brajeshJiSays[lang]}</p>
+          <blockquote className={`font-display text-xl leading-relaxed text-ink ${lang === 'hi' || /[ऀ-ॿ]/.test(cite.quote) ? 'font-devanagari' : 'italic'}`}>
+            <span className="text-vermilion mr-1">❝</span>{cite.quote}<span className="text-vermilion ml-1">❞</span>
+          </blockquote>
+          <p className="mt-3 text-sm text-ink-mute">
+            — {STR.at[lang]} {formatTime(cite.start_sec)} {STR.in[lang]} <Link href={`/library/${cite.video_id}?lang=${lang}&t=${cite.start_sec}`} className="italic underline-offset-4 hover:underline">{cite.title}</Link>
+          </p>
+        </section>
+
+        {/* Disclaimer */}
+        <hr className="rule mt-14" />
+        <p className="text-xs text-ink-mute leading-relaxed max-w-prose">
+          {STR.disclaimer[lang]}
+        </p>
+      </main>
+
+      {/* Right rail: source list + related topics */}
+      <aside className="lg:sticky lg:top-8 lg:self-start space-y-10 reveal-up reveal-delay-2">
+        {data.citations.length > 1 && (
+          <div>
+            <p className="citation-meta mb-4">{lang === 'hi' ? 'अन्य संदर्भ' : 'Sources'}</p>
+            <ul className="space-y-3">
+              {data.citations.map((c, i) => (
+                <li key={i}>
+                  <button
+                    onClick={() => setActiveCite(i)}
+                    className={`text-left w-full ${i === activeCite ? 'text-vermilion' : 'text-ink-soft hover:text-ink'} transition-colors`}
+                  >
+                    <span className="citation-meta block mb-1">[{i + 1}] {formatTime(c.start_sec)}</span>
+                    <span className="font-display italic text-sm leading-snug block">{c.title.replace(/\s*-\s*Brajesh Gautam.*$/i, '').replace(/\s*\(\d{1,2}\s+\w+\s+\d{4}\s*\)$/, '')}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {data.related_topics.length > 0 && (
+          <div>
+            <p className="citation-meta mb-3">{STR.alsoExplore[lang]}</p>
+            <ul className="space-y-2">
+              {data.related_topics.map(t => (
+                <li key={t} className="font-display italic text-ink-soft text-sm">{t}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </aside>
     </article>
   );
 }

@@ -17,7 +17,7 @@ export default function AskPage({ searchParams }: { searchParams: { q?: string; 
       <Header lang={lang} />
       <main className="max-w-wide mx-auto px-6 md:px-10 py-10">
         {/* Inline search to ask another question */}
-        <div className="max-w-folio mx-auto mb-12">
+        <div className="max-w-folio mx-auto mb-16 reveal-up">
           <SearchBox lang={lang} initial={q} />
         </div>
         <FolioAnswer question={q} lang={lang} />

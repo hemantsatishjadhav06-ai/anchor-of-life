@@ -52,8 +52,11 @@ export default function DailyAnchor({ lang }: { lang: Lang }) {
   const url = ytTimestampUrl(pick.video_id, pick.excerpt_start);
 
   return (
-    <section className="border-t border-ink-line/60 pt-10 mt-12">
-      <p className="citation-meta mb-6">{lang === 'hi' ? 'आज का आधार' : "Today's Anchor"}</p>
+    <section className="border-t border-ink-line/60 pt-10 mt-12 reveal-up">
+      <div className="flex items-center gap-3 mb-6">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-gerua daily-breath" />
+        <p className="citation-meta">{lang === 'hi' ? 'आज का आधार' : "Today's Anchor"}</p>
+      </div>
       <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 items-center">
         <Link href={`/library/${pick.video_id}?lang=${lang}&t=${pick.excerpt_start}`} className="block group">
           <div className="relative aspect-video bg-paper-deep overflow-hidden">

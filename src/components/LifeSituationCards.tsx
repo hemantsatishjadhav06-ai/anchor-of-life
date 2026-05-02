@@ -46,7 +46,7 @@ function getCards(): Card[] {
 export default function LifeSituationCards({ lang }: { lang: Lang }) {
   const cards = getCards();
   return (
-    <section id="topics" className="border-t border-ink-line/60 pt-10 mt-12">
+    <section id="topics" className="border-t border-ink-line/60 pt-10 mt-12 reveal-up">
       <div className="flex items-baseline justify-between mb-8">
         <h2 className="font-display text-3xl md:text-4xl text-ink tracking-tighter-display">
           {lang === 'hi' ? <span className="font-devanagari">मन में क्या है?</span> : 'What are you carrying?'}

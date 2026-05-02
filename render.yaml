@@ -1,0 +1,44 @@
+# Render Blueprint for Anchor of Life
+# Creates a Web Service from the Dockerfile, mounted with a small persistent disk
+# for the SQLite database. Bootstrap downloads anchor.db from a GitHub Release
+# on first boot if the disk is empty.
+#
+# Region: Singapore (closest to Indian audience).
+
+services:
+  - type: web
+    name: anchor-of-life
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter            # $7/mo — required for persistent disk + always-on
+    region: singapore
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /data/anchor.db
+      - key: SITE_URL
+        value: https://anchor-of-life.onrender.com
+      - key: SITE_NAME
+        value: Anchor of Life
+      - key: EMBEDDING_MODEL
+        value: openai/text-embedding-3-small
+      - key: COMPOSER_MODEL
+        value: anthropic/claude-sonnet-4.5
+      - key: GH_REPO
+        value: hemantsatishjadhav06-ai/anchor-of-life
+      - key: GH_RELEASE
+        value: v0.1-data
+      - key: GH_ASSET
+        value: anchor.db.gz
+      # Set via Render dashboard or API (sync: false keeps it out of git):
+      - key: OPENROUTER_API_KEY
+        sync: false
+    disk:
+      name: anchor-data
+      mountPath: /data
+      sizeGB: 2

@@ -21,6 +21,10 @@ const config: Config = {
           DEFAULT: '#B83227', // ritual / sacred accent — used sparingly
           deep: '#8E1F17',
         },
+        gerua: {
+          DEFAULT: '#D77A2C', // saffron warmth — daily-anchor mark, loading dot
+          deep: '#A8591D',
+        },
         indigo: {
           DEFAULT: '#2C3E50', // alternate accent
         },
