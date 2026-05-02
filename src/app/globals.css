@@ -98,7 +98,7 @@ a:not([class]):hover {
   font-size: 1.18rem;
   line-height: 1.7;
   color: var(--ink);             /* full ink for body — high contrast */
-  font-weight: 450;              /* slightly heavier than 400 — Fraunces variable */
+  font-weight: 500;              /* slightly heavier than 400 — Fraunces variable */
   margin-bottom: 1.15em;
   font-feature-settings: 'kern' 1, 'liga' 1, 'opsz' 1, 'onum' 1;
 }
@@ -133,7 +133,7 @@ a:not([class]):hover {
   padding: 0.85rem 0;
   font-family: var(--font-display), serif;
   font-size: 1.35rem;
-  font-weight: 450;
+  font-weight: 500;
   color: var(--ink);
   width: 100%;
   transition: border-color 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
