@@ -48,8 +48,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${devanagari.variable} ${sans.variable}`}>
-      <body className="bg-paper text-ink antialiased font-sans">
+    <html lang="en" className={`${display.variable} ${devanagari.variable} ${sans.variable}`} style={{ colorScheme: 'light only' }}>
+      <head>
+        {/* Force light theme regardless of OS dark mode preference */}
+        <meta name="color-scheme" content="light only" />
+        <meta name="theme-color" content="#FAFAF5" />
+      </head>
+      <body className="bg-paper text-ink antialiased font-sans" style={{ colorScheme: 'light only' }}>
         {children}
       </body>
     </html>

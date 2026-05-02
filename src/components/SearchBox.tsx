@@ -42,6 +42,12 @@ export default function SearchBox({ lang, autoFocus = false, initial = '' }: { l
           className={`input-rule ${lang === 'hi' ? 'font-devanagari' : ''}`}
           aria-label={STR.askPlaceholder[lang]}
           enterKeyHint="search"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          name="anchor-question"
+          data-form-type="other"
         />
         <span className="absolute right-0 bottom-3 text-ink-mute text-xs uppercase tracking-wider pointer-events-none">↵</span>
       </div>
