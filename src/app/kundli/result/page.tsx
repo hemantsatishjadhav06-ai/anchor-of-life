@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -16,7 +16,7 @@ interface StoredInput {
   place: { short: string; tz: string; lat: number; lon: number };
 }
 
-export default function KundliResultPage() {
+function ResultInner() {
   const router = useRouter();
   const sp = useSearchParams();
   const lang = (sp.get('lang') === 'hi' ? 'hi' : 'en') as 'en' | 'hi';
@@ -114,5 +114,17 @@ export default function KundliResultPage() {
       </main>
       <Footer lang={lang} />
     </>
+  );
+}
+
+export default function KundliResultPage() {
+  return (
+    <Suspense fallback={
+      <main className="max-w-folio mx-auto px-6 py-20">
+        <p className="text-ink-soft">Loading…</p>
+      </main>
+    }>
+      <ResultInner />
+    </Suspense>
   );
 }
