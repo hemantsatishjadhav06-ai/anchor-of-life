@@ -1,0 +1,114 @@
+'use client';
+
+import type { Prescription } from '@/lib/astrology/types';
+import { FIELD_KEYS } from '@/lib/astrology/types';
+
+const FIELD_HI: Record<string, string> = {
+  'Anjaan': 'अंजान',
+  'School': 'विद्यालय',
+  'Mandir / Gurudwara': 'मंदिर / गुरुद्वारा',
+  'R Hand': 'दाँया हाथ',
+  'L Hand': 'बाँया हाथ',
+  'Cow': 'गौ सेवा',
+  'Mass (Non-Veg)': 'मांसाहार',
+  'R Leg': 'दाँया पैर',
+  'L Leg': 'बाँया पैर',
+  'Rules (Neam)': 'नियम',
+  'Blind People': 'अंधे जन सेवा',
+  'Waist': 'कमर',
+  'River': 'नदी',
+  'Tree': 'वृक्ष',
+  'Roots (Jad)': 'जड़',
+  'Pitr Gaya': 'पितृ गया',
+  'Pitr Classes': 'पितृ कक्षाएँ',
+  'Nose Septum (Nak ki Bali)': 'नाक की बाली',
+  'Transe (Kinner)': 'किन्नर सेवा',
+  'Pooja': 'पूजा',
+  'Devta': 'देवता',
+};
+
+export default function PrescriptionTable({ prescription, lang = 'en' as 'en' | 'hi' }: { prescription: Prescription; lang?: 'en' | 'hi' }) {
+  return (
+    <div>
+      <p className="citation-meta mb-3">{lang === 'hi' ? '20-क्षेत्र परामर्श प्रारूप' : "BG's 20-field consultation"}</p>
+      <p className="font-display text-xl text-ink leading-snug mb-6 max-w-prose font-medium">
+        {prescription.summary}
+      </p>
+
+      {prescription.doshas.length > 0 && (
+        <div className="mb-5 inline-flex flex-wrap gap-2">
+          {prescription.doshas.map(d => (
+            <span key={d} className="px-2 py-1 border-2 border-vermilion text-vermilion text-[0.78rem] font-bold uppercase tracking-wider">
+              {d}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {prescription.highlights.length > 0 && (
+        <ul className="mb-8 space-y-1.5 max-w-prose">
+          {prescription.highlights.map(h => (
+            <li key={h} className="text-ink-soft font-medium text-[0.95rem]">
+              <span className="text-vermilion mr-2">›</span>{h}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* The signature 20-field table */}
+      <div className="border-2 border-ink overflow-hidden">
+        <table className="w-full border-collapse">
+          <thead className="bg-paper-deep border-b-2 border-ink">
+            <tr>
+              <th className="text-left p-3 text-[0.72rem] uppercase tracking-[0.14em] font-bold w-1/3">{lang === 'hi' ? 'क्षेत्र' : 'Field'}</th>
+              <th className="text-left p-3 text-[0.72rem] uppercase tracking-[0.14em] font-bold">{lang === 'hi' ? 'सिफ़ारिश' : 'Recommendation'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FIELD_KEYS.map((k, idx) => {
+              const f = prescription.fields[k];
+              const intensityBar =
+                f.intensity === 'mandatory' ? 'border-l-4 border-vermilion' :
+                f.intensity === 'avoid'      ? 'border-l-4 border-ink' :
+                f.intensity === 'recommended'? 'border-l-4 border-gerua' :
+                                               'border-l-4 border-ink-line';
+              return (
+                <tr key={k} className={`${idx % 2 === 0 ? 'bg-paper' : 'bg-paper-deep/50'} border-b border-ink-line/40`}>
+                  <td className={`p-3 align-top ${intensityBar}`}>
+                    <div className="font-bold text-ink text-[0.95rem]">{k}</div>
+                    {lang === 'hi' && FIELD_HI[k] && (
+                      <div className="font-devanagari text-[0.92rem] text-ink-soft">{FIELD_HI[k]}</div>
+                    )}
+                  </td>
+                  <td className="p-3 align-top">
+                    <div className={`text-[0.95rem] leading-snug font-medium ${f.intensity === 'avoid' ? 'text-vermilion font-bold' : 'text-ink'}`}>
+                      {f.value}
+                    </div>
+                    <div className="text-[0.78rem] text-ink-mute mt-1 italic">
+                      {f.detail}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Legend */}
+      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-[0.78rem] text-ink-soft">
+        <span className="flex items-center gap-2"><span className="w-3 h-3 bg-vermilion inline-block" /> {lang === 'hi' ? 'अनिवार्य' : 'Mandatory'}</span>
+        <span className="flex items-center gap-2"><span className="w-3 h-3 bg-gerua inline-block" /> {lang === 'hi' ? 'अनुशंसित' : 'Recommended'}</span>
+        <span className="flex items-center gap-2"><span className="w-3 h-3 bg-ink-line inline-block" /> {lang === 'hi' ? 'वैकल्पिक' : 'Optional'}</span>
+        <span className="flex items-center gap-2"><span className="w-3 h-3 bg-ink inline-block" /> {lang === 'hi' ? 'वर्जित' : 'Avoid'}</span>
+      </div>
+
+      {/* Disclaimer */}
+      <p className="mt-8 text-[0.78rem] text-ink-mute leading-relaxed max-w-prose font-medium">
+        {lang === 'hi'
+          ? 'यह परामर्श स्वचालित नियम-आधारित है। ब्रजेश जी की वास्तविक व्यक्तिगत प्रिस्क्रिप्शन के लिए कृपया उनसे सीधे अपॉइंटमेंट बुक करें।'
+          : "This prescription is generated by rule-based logic from your chart. For Brajesh ji's actual personal prescription tailored to your specific situation, please book a consultation directly."}
+      </p>
+    </div>
+  );
+}

@@ -13,6 +13,7 @@ export default function Header({ lang }: { lang: Lang }) {
           </div>
         </Link>
         <nav className="flex items-baseline gap-5 md:gap-7 text-[0.92rem]">
+          <Link href={`/kundli?lang=${lang}`} className="btn-text">{lang === 'hi' ? 'कुंडली' : 'Kundli'}</Link>
           <Link href={`/library?lang=${lang}`} className="btn-text">{lang === 'hi' ? 'पुस्तकालय' : 'Library'}</Link>
           <Link href={`/about?lang=${lang}`} className="btn-text">{lang === 'hi' ? 'परिचय' : 'About'}</Link>
           <LangToggle current={lang} />

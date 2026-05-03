@@ -21,11 +21,13 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.703.0",
+    "astronomy-engine": "^2.1.19",
     "better-sqlite3": "^11.8.1",
     "next": "14.2.18",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sqlite-vec": "^0.1.6",
+    "tz-lookup": "^6.1.25",
     "zod": "^3.23.8"
   },
   "devDependencies": {
