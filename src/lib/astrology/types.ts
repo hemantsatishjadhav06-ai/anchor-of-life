@@ -1,4 +1,4 @@
-// Vedic astrology types — kundli computation + BG 20-field prescription.
+// Vedic astrology types — kundli computation + AI agent.
 
 export type ZodiacMode = 'sidereal' | 'tropical';
 
@@ -31,11 +31,11 @@ export const PLANETS: Array<{ name: PlanetName; symbol: string; hi: string }> = 
 export interface PlanetPosition {
   name: PlanetName;
   symbol: string;
-  longitude: number;       // 0-360 sidereal
+  longitude: number;       // 0-360
   signIndex: number;       // 0-11
   sign: SignName;
   degreeInSign: number;    // 0-30
-  house: number;           // 1-12 (whole-sign from lagna)
+  house: number;           // 1-12
   retrograde: boolean;
   nakshatra: string;
   nakshatraLord: PlanetName;
@@ -53,7 +53,7 @@ export interface BirthInput {
 }
 
 export interface Chart {
-  ascendant: number;       // sidereal longitude 0-360
+  ascendant: number;       // longitude 0-360 (sidereal unless flagged otherwise)
   ascSignIndex: number;    // 0-11
   ascSign: SignName;
   ascDegreeInSign: number;
@@ -61,55 +61,68 @@ export interface Chart {
   // House cusps (whole-sign): house i contains the sign (ascSignIndex + i - 1) % 12
 }
 
+// ─── Vimshottari Dasha types ───────────────────────────────────────────────
+
+export interface DashaResult {
+  lord: PlanetName;
+  start: string;           // ISO UTC
+  end: string;             // ISO UTC
+}
+
+export interface DashaReadout {
+  mahadashas: DashaResult[];        // 9 mahas covering ~120 years from birth
+  activeMaha: DashaResult;          // Maha containing 'now'
+  activeAntar: DashaResult;         // Antar within activeMaha containing 'now'
+  birthMoonNakshatraIndex: number;
+}
+
+// ─── Doshas / Yogas ────────────────────────────────────────────────────────
+
+export type DoshaKey = 'mangal' | 'kaalSarp' | 'pitra' | 'sadeSati';
+
+export interface DoshaResult {
+  key: DoshaKey;
+  present: boolean;
+  detail: string;
+}
+
+export interface YogaResult {
+  key: string;
+  name: string;
+  planets: PlanetName[];
+  detail: string;
+}
+
+// ─── KP (Krishnamurti) ─────────────────────────────────────────────────────
+
+export interface KPSubLord {
+  star: PlanetName;
+  sub: PlanetName;
+  subSub: PlanetName;
+}
+
+export interface KPReadout {
+  cusps: number[];                              // 12 sidereal cusp longitudes (Placidus)
+  cuspSubLords: PlanetName[];                   // 12 sub-lords, one per cusp
+  planetSubLords: Partial<Record<PlanetName, KPSubLord>>;
+}
+
+// ─── FullChart bundle ──────────────────────────────────────────────────────
+
 export interface FullChart {
   input: BirthInput;
-  d1: Chart;        // Lagna (Rasi) chart — Lahiri sidereal
-  d9: Chart;        // Navamsa
-  // potential: d10 (Dashamsa), d12 (Dwadasamsa), etc.
+  d1: Chart;
+  d7: Chart;
+  d9: Chart;
+  d10: Chart;
+  d12: Chart;
+  d30: Chart;
   ayanamsa: number;
-  utcDate: string;  // ISO UTC of birth moment
-}
-
-// ─── BG 20-field prescription format ──────────────────────────────────────
-export type FieldKey =
-  | 'Anjaan'
-  | 'School'
-  | 'Mandir / Gurudwara'
-  | 'R Hand'
-  | 'L Hand'
-  | 'Cow'
-  | 'Mass (Non-Veg)'
-  | 'R Leg'
-  | 'L Leg'
-  | 'Rules (Neam)'
-  | 'Blind People'
-  | 'Waist'
-  | 'River'
-  | 'Tree'
-  | 'Roots (Jad)'
-  | 'Pitr Gaya'
-  | 'Pitr Classes'
-  | 'Nose Septum (Nak ki Bali)'
-  | 'Transe (Kinner)'
-  | 'Pooja'
-  | 'Devta';
-
-export const FIELD_KEYS: FieldKey[] = [
-  'Anjaan','School','Mandir / Gurudwara','R Hand','L Hand','Cow','Mass (Non-Veg)',
-  'R Leg','L Leg','Rules (Neam)','Blind People','Waist','River','Tree','Roots (Jad)',
-  'Pitr Gaya','Pitr Classes','Nose Septum (Nak ki Bali)','Transe (Kinner)','Pooja','Devta',
-];
-
-export interface FieldRecommendation {
-  key: FieldKey;
-  value: string;            // primary recommendation (e.g., "donate aata 1.25 kg")
-  detail: string;           // short rationale citing chart features
-  intensity: 'mandatory' | 'recommended' | 'optional' | 'avoid';
-}
-
-export interface Prescription {
-  fields: Record<FieldKey, FieldRecommendation>;
-  summary: string;          // 2-3 sentence chart summary
-  doshas: string[];         // detected doshas: 'Mangal Dosha', 'Pitr Dosha', etc.
-  highlights: string[];     // notable yogas / placements
+  utcDate: string;          // ISO UTC of birth moment
+  bhavaChalit?: Chart;
+  dasha?: DashaReadout;
+  doshas?: DoshaResult[];
+  yogas?: YogaResult[];
+  kp?: KPReadout;
+  sayana?: { d1: Chart };
 }

@@ -1,15 +1,18 @@
 /**
- * Vedic kundli computation — ports the verified math from astro-explorer.
- *
- * Uses astronomy-engine (pure JS, MIT) for ephemeris.
- * Lahiri ayanamsa for sidereal conversion.
- * Whole-sign house system (standard Vedic).
+ * Vedic kundli computation — astronomy-engine ephemeris + Lahiri ayanamsa.
+ * Whole-sign houses for D-1, divisional helpers for D-N.
  */
 import * as Astronomy from 'astronomy-engine';
 import {
   SIGNS, SIGN_LORDS, PLANETS,
   type Chart, type FullChart, type BirthInput, type PlanetName, type PlanetPosition,
 } from './types';
+import { divisionalSignOf } from './divisional';
+import { computeVimshottari } from './dasha';
+import { detectAllDoshas } from './doshas';
+import { detectAllYogas } from './yogas';
+import { computeKP } from './kp';
+import { computeBhavaChalit } from './bhavaChalit';
 
 const NAKSHATRAS = [
   'Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha',
@@ -19,19 +22,18 @@ const NAKSHATRAS = [
 
 const VIMSHOTTARI_LORDS: PlanetName[] = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
 
-// ─── Core: convert birth input → UTC Date ──────────────────────────────────
+// ─── Birth → UTC ───────────────────────────────────────────────────────────
 
 export function birthToUtc(input: BirthInput): Date {
   const [y, m, d] = input.date.split('-').map(Number);
   const [hh, mm] = input.time.split(':').map(Number);
-  // Local time at birth → UTC
   const localMs = Date.UTC(y, m - 1, d, hh, mm);
   return new Date(localMs - input.tzOffsetMinutes * 60_000);
 }
 
 // ─── Ephemeris ─────────────────────────────────────────────────────────────
 
-function getEclipticLongitude(body: PlanetName, date: Date): number {
+export function getEclipticLongitude(body: PlanetName, date: Date): number {
   if (body === 'Rahu' || body === 'Ketu') {
     return getMeanLunarNode(date, body === 'Ketu');
   }
@@ -40,7 +42,6 @@ function getEclipticLongitude(body: PlanetName, date: Date): number {
   if (body === 'Moon') {
     vec = Astronomy.GeoMoon(time);
   } else {
-    // map our names to astronomy-engine Body enum strings
     vec = Astronomy.GeoVector(body as any, time, true);
   }
   const ecl = Astronomy.Ecliptic(vec);
@@ -70,21 +71,18 @@ function applyZodiac(longitude: number, date: Date, mode: 'sidereal' | 'tropical
   return longitude;
 }
 
-// Retrograde detection: planet is retrograde if its ecliptic longitude is decreasing
 function isRetrograde(body: PlanetName, date: Date): boolean {
-  if (body === 'Sun' || body === 'Moon') return false;          // luminaries never retrograde
-  if (body === 'Rahu' || body === 'Ketu') return true;          // nodes always retrograde
-  const dt = 60 * 60 * 1000;                                     // 1 hour delta
+  if (body === 'Sun' || body === 'Moon') return false;
+  if (body === 'Rahu' || body === 'Ketu') return true;
+  const dt = 60 * 60 * 1000;
   const l1 = getEclipticLongitude(body, new Date(date.getTime() - dt));
   const l2 = getEclipticLongitude(body, new Date(date.getTime() + dt));
-  // wrap
   let diff = l2 - l1;
   if (diff > 180) diff -= 360;
   if (diff < -180) diff += 360;
   return diff < 0;
 }
 
-// Ascendant from local sidereal time
 function getAscendant(date: Date, lat: number, lonEast: number): number {
   const time = Astronomy.MakeTime(date);
   const gstHours = Astronomy.SiderealTime(time);
@@ -127,39 +125,26 @@ function getNakshatra(longitude: number): { name: string; lord: PlanetName; pada
   };
 }
 
-// Navamsa (D9) sign of a longitude
-function navamsaSignOf(longitude: number): number {
-  const lon = ((longitude % 360) + 360) % 360;
-  const signIdx = Math.floor(lon / 30);
-  const degInSign = lon - signIdx * 30;
-  const navIdx = Math.floor(degInSign * 3 / 10);
-  let startSign;
-  if (signIdx % 3 === 0) startSign = signIdx;
-  else if (signIdx % 3 === 1) startSign = (signIdx + 8) % 12;
-  else startSign = (signIdx + 4) % 12;
-  return (startSign + navIdx) % 12;
-}
-
 // ─── Compute charts ────────────────────────────────────────────────────────
 
-export function computeD1(date: Date, lat: number, lon: number): Chart {
+export function computeD1(date: Date, lat: number, lon: number, mode: 'sidereal' | 'tropical' = 'sidereal'): Chart {
   const ascRaw = getAscendant(date, lat, lon);
-  const asc = applyZodiac(ascRaw, date, 'sidereal');
+  const asc = applyZodiac(ascRaw, date, mode);
   const ascSignIndex = longitudeToSign(asc);
 
   const planets: PlanetPosition[] = PLANETS.map(p => {
     const rawLon = getEclipticLongitude(p.name, date);
-    const sidLon = applyZodiac(rawLon, date, 'sidereal');
-    const sigIdx = longitudeToSign(sidLon);
-    const nak = getNakshatra(sidLon);
+    const lonAdj = applyZodiac(rawLon, date, mode);
+    const sigIdx = longitudeToSign(lonAdj);
+    const nak = getNakshatra(lonAdj);
     return {
       name: p.name,
       symbol: p.symbol,
-      longitude: sidLon,
+      longitude: lonAdj,
       signIndex: sigIdx,
       sign: SIGNS[sigIdx],
-      degreeInSign: sidLon - sigIdx * 30,
-      house: houseFromAsc(sidLon, asc),
+      degreeInSign: lonAdj - sigIdx * 30,
+      house: houseFromAsc(lonAdj, asc),
       retrograde: isRetrograde(p.name, date),
       nakshatra: nak.name,
       nakshatraLord: nak.lord,
@@ -176,53 +161,71 @@ export function computeD1(date: Date, lat: number, lon: number): Chart {
   };
 }
 
-export function computeD9(d1: Chart): Chart {
-  const navAscSign = navamsaSignOf(d1.ascendant);
-  const navAsc = navAscSign * 30 + (d1.ascendant % 30);
-
+// Generic divisional chart from D-1 — uses divisionalSignOf.
+function computeDivisional(d1: Chart, n: number): Chart {
+  if (n === 1) return d1;
+  const ascSignIdx = divisionalSignOf(d1.ascendant, n);
+  const ascDegInSign = d1.ascendant % 30;
+  const ascNew = ascSignIdx * 30 + ascDegInSign;
   const planets: PlanetPosition[] = d1.planets.map(p => {
-    const navSign = navamsaSignOf(p.longitude);
-    const newLon = navSign * 30 + p.degreeInSign;
+    const sigIdx = divisionalSignOf(p.longitude, n);
+    const newLon = sigIdx * 30 + p.degreeInSign;
     return {
       ...p,
       longitude: newLon,
-      signIndex: navSign,
-      sign: SIGNS[navSign],
-      degreeInSign: p.degreeInSign,
-      house: ((navSign - navAscSign + 12) % 12) + 1,
+      signIndex: sigIdx,
+      sign: SIGNS[sigIdx],
+      house: ((sigIdx - ascSignIdx + 12) % 12) + 1,
     };
   });
-
   return {
-    ascendant: navAsc,
-    ascSignIndex: navAscSign,
-    ascSign: SIGNS[navAscSign],
-    ascDegreeInSign: d1.ascendant % 30,
+    ascendant: ascNew,
+    ascSignIndex: ascSignIdx,
+    ascSign: SIGNS[ascSignIdx],
+    ascDegreeInSign: ascDegInSign,
     planets,
   };
 }
 
 export function computeFullChart(input: BirthInput): FullChart {
   const utc = birthToUtc(input);
-  const d1 = computeD1(utc, input.lat, input.lon);
-  const d9 = computeD9(d1);
+  const d1 = computeD1(utc, input.lat, input.lon, 'sidereal');
+  const ayanamsa = getAyanamsa(utc);
+
+  const moon = d1.planets.find(p => p.name === 'Moon')!;
+  const dasha = computeVimshottari(moon.longitude, utc);
+  const doshas = detectAllDoshas(d1, utc);
+  const yogas = detectAllYogas(d1);
+  const kp = computeKP(d1, utc, input.lat, input.lon, ayanamsa);
+  const bhavaChalit = computeBhavaChalit(d1, utc, input.lon, ayanamsa);
+  const sayanaD1 = computeD1(utc, input.lat, input.lon, 'tropical');
+
   return {
     input,
     d1,
-    d9,
-    ayanamsa: getAyanamsa(utc),
+    d7:  computeDivisional(d1, 7),
+    d9:  computeDivisional(d1, 9),
+    d10: computeDivisional(d1, 10),
+    d12: computeDivisional(d1, 12),
+    d30: computeDivisional(d1, 30),
+    ayanamsa,
     utcDate: utc.toISOString(),
+    bhavaChalit,
+    dasha,
+    doshas,
+    yogas,
+    kp,
+    sayana: { d1: sayanaD1 },
   };
 }
 
-// ─── Sign-lord helper ──────────────────────────────────────────────────────
+// ─── Lord helpers ──────────────────────────────────────────────────────────
 
 export function lordOfSignIndex(signIndex: number): PlanetName {
   return SIGN_LORDS[signIndex] as PlanetName;
 }
 
 export function lordOfHouse(chart: Chart, house: number): PlanetName {
-  // Whole-sign: house N's sign = (ascSign + N - 1) mod 12
   const sigIdx = (chart.ascSignIndex + house - 1) % 12;
   return SIGN_LORDS[sigIdx] as PlanetName;
 }
