@@ -1,6 +1,5 @@
 'use client';
 import KundliChart from '@/components/KundliChart';
-import AstroWheel from './AstroWheel';
 import type { Lang } from '@/lib/types';
 import type { FullChart, Chart } from '@/lib/astrology/types';
 
@@ -13,13 +12,7 @@ const CHART_LABELS: Record<string, { en: string; hi: string }> = {
   d30: { en: 'D-30 Trimsamsa (Hardships)',hi: 'D-30 त्रिंशांश (दुख)' },
 };
 
-export default function AllCharts({
-  fc, lang, style,
-}: {
-  fc: FullChart;
-  lang: Lang;
-  style: 'south' | 'wheel';
-}) {
+export default function AllCharts({ fc, lang }: { fc: FullChart; lang: Lang }) {
   const charts: Array<{ key: keyof typeof CHART_LABELS; data: Chart }> = [
     { key: 'd1',  data: fc.d1 },
     { key: 'd9',  data: fc.d9 },
@@ -37,11 +30,7 @@ export default function AllCharts({
             {CHART_LABELS[key][lang]}
           </figcaption>
           <div className="flex justify-center">
-            {style === 'wheel' ? (
-              <AstroWheel chart={data} size={260} />
-            ) : (
-              <KundliChart chart={data} size={260} lang={lang} />
-            )}
+            <KundliChart chart={data} size={260} lang={lang} />
           </div>
           <p className="text-xs text-center text-ink-mute">
             {lang === 'hi' ? 'लग्न' : 'Lagna'} {data.ascSign} {data.ascDegreeInSign.toFixed(1)}°

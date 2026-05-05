@@ -12,6 +12,7 @@ import YogaList from '@/components/kundli/YogaList';
 import DashaTimeline from '@/components/kundli/DashaTimeline';
 import ChartChat from '@/components/kundli/ChartChat';
 import Reading from '@/components/kundli/Reading';
+import LifeAreaSection from '@/components/kundli/LifeAreaSection';
 import type { FullChart, BirthInput } from '@/lib/astrology/types';
 
 interface StoredInputShape {
@@ -28,7 +29,6 @@ function ResultInner() {
 
   const [chart, setChart] = useState<FullChart | null>(null);
   const [input, setInput] = useState<BirthInput | null>(null);
-  const [style, setStyle] = useState<'south' | 'wheel'>('south');
 
   useEffect(() => {
     const last = sessionStorage.getItem('kundli:last');
@@ -85,33 +85,6 @@ function ResultInner() {
           </p>
         </header>
 
-        {/* Style toggle */}
-        <div className="mb-6 flex items-center gap-3 text-sm">
-          <span className="citation-meta">{lang === 'hi' ? 'शैली' : 'Style'}:</span>
-          <button
-            type="button"
-            onClick={() => setStyle('south')}
-            className={`px-3 py-1 transition-colors ${
-              style === 'south'
-                ? 'border-b-2 border-vermilion text-ink font-medium'
-                : 'text-ink-soft hover:text-ink'
-            }`}
-          >
-            {lang === 'hi' ? 'दक्षिण भारतीय' : 'South Indian'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setStyle('wheel')}
-            className={`px-3 py-1 transition-colors ${
-              style === 'wheel'
-                ? 'border-b-2 border-vermilion text-ink font-medium'
-                : 'text-ink-soft hover:text-ink'
-            }`}
-          >
-            {lang === 'hi' ? 'गोल चक्र' : 'Astro Wheel'}
-          </button>
-        </div>
-
         {/* All charts grid */}
         <section className="mb-14">
           <h2 className="font-display text-2xl text-ink mb-1 font-medium">
@@ -119,13 +92,13 @@ function ResultInner() {
           </h2>
           <p className="text-ink-soft text-sm mb-6">
             {lang === 'hi'
-              ? 'जन्मकुंडली + पाँच विभाजन कुंडलियाँ — सभी एक स्थान पर।'
+              ? 'जन्मकुंडली + पाँच विभाजन कुंडलियाँ — एक स्थान पर।'
               : 'Birth chart + five divisional charts — all in one place.'}
           </p>
-          <AllCharts fc={chart} lang={lang} style={style} />
+          <AllCharts fc={chart} lang={lang} />
         </section>
 
-        {/* Doshas + Yogas + Dashas — three-column glance */}
+        {/* Doshas + Yogas + Dashas */}
         <section className="grid lg:grid-cols-3 gap-10 mb-14">
           <DoshaList fc={chart} lang={lang} />
           <YogaList fc={chart} lang={lang} />
@@ -138,12 +111,80 @@ function ResultInner() {
             {lang === 'hi' ? 'समग्र पठन' : 'Top-line reading'}
           </h2>
           <p className="text-ink-soft text-sm mb-6">
-            {lang === 'hi'
-              ? "ब्रजेश जी की रिकॉर्डेड शिक्षाओं से।"
-              : "Drawn from Brajesh ji's recorded teachings."}
+            {lang === 'hi' ? "ब्रजेश जी की रिकॉर्डेड शिक्षाओं से।" : "Drawn from Brajesh ji's recorded teachings."}
           </p>
           <Reading tab="overview" input={input} lang={lang} />
         </section>
+
+        <hr className="rule my-12" />
+
+        {/* Per-life-area inline sections */}
+        <LifeAreaSection
+          tab="marriage"
+          divisional={chart.d9}
+          input={input}
+          lang={lang}
+          title={{ en: 'Marriage', hi: 'विवाह' }}
+          subtitle={{
+            en: 'D-9 Navamsa · Venus, 7th house, Navamsa lord',
+            hi: 'D-9 नवांश · शुक्र, 7वाँ भाव, नवांश स्वामी',
+          }}
+          chartLabel={{ en: 'D-9 Navamsa', hi: 'D-9 नवांश' }}
+        />
+
+        <LifeAreaSection
+          tab="career"
+          divisional={chart.d10}
+          input={input}
+          lang={lang}
+          title={{ en: 'Career', hi: 'व्यवसाय' }}
+          subtitle={{
+            en: 'D-10 Dasamsa · Sun, Saturn, 10th house, Dasamsa lord',
+            hi: 'D-10 दशमांश · सूर्य, शनि, 10वाँ भाव',
+          }}
+          chartLabel={{ en: 'D-10 Dasamsa', hi: 'D-10 दशमांश' }}
+        />
+
+        <LifeAreaSection
+          tab="children"
+          divisional={chart.d7}
+          input={input}
+          lang={lang}
+          title={{ en: 'Children', hi: 'संतान' }}
+          subtitle={{
+            en: 'D-7 Saptamsa · Jupiter, 5th house',
+            hi: 'D-7 सप्तमांश · गुरु, 5वाँ भाव',
+          }}
+          chartLabel={{ en: 'D-7 Saptamsa', hi: 'D-7 सप्तमांश' }}
+        />
+
+        <LifeAreaSection
+          tab="parents"
+          divisional={chart.d12}
+          input={input}
+          lang={lang}
+          title={{ en: 'Parents', hi: 'माता-पिता' }}
+          subtitle={{
+            en: 'D-12 Dwadasamsa · Sun (father), Moon (mother), 4th & 9th houses',
+            hi: 'D-12 द्वादशांश · सूर्य (पिता), चंद्र (माता), 4वाँ व 9वाँ भाव',
+          }}
+          chartLabel={{ en: 'D-12 Dwadasamsa', hi: 'D-12 द्वादशांश' }}
+        />
+
+        <LifeAreaSection
+          tab="hardships"
+          divisional={chart.d30}
+          input={input}
+          lang={lang}
+          title={{ en: 'Hardships', hi: 'दुख-कष्ट' }}
+          subtitle={{
+            en: 'D-30 Trimsamsa · Saturn, Rahu, 6/8/12 houses',
+            hi: 'D-30 त्रिंशांश · शनि, राहु, 6/8/12वाँ भाव',
+          }}
+          chartLabel={{ en: 'D-30 Trimsamsa', hi: 'D-30 त्रिंशांश' }}
+        />
+
+        <hr className="rule my-12" />
 
         {/* Full BG-style 27-field prescription */}
         <section className="mb-14">

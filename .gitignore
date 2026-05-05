@@ -12,3 +12,7 @@ out/
 dist/
 build/
 graphify-input/
+
+# Local screenshots from browser tests
+screenshot-*.png
+screenshot-v2-*.png
