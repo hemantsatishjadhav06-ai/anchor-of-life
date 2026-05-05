@@ -113,7 +113,7 @@ function ResultInner() {
           <p className="text-ink-soft text-sm mb-6">
             {lang === 'hi' ? "ब्रजेश जी की रिकॉर्डेड शिक्षाओं से।" : "Drawn from Brajesh ji's recorded teachings."}
           </p>
-          <Reading tab="overview" input={input} lang={lang} />
+          <Reading tab="overview" input={input} lang={lang} eager />
         </section>
 
         <hr className="rule my-12" />

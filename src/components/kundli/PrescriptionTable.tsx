@@ -70,7 +70,15 @@ export default function PrescriptionTable({ input, lang }: Props) {
       body: JSON.stringify({ input, language: lang }),
       signal: ctrl.signal,
     })
-      .then(r => r.json())
+      .then(async r => {
+        if (!r.ok) {
+          const t = await r.text().catch(() => '');
+          throw new Error(`HTTP ${r.status}${t ? ': ' + t.slice(0, 160) : ''}`);
+        }
+        const text = await r.text();
+        if (!text) throw new Error('empty response');
+        return JSON.parse(text);
+      })
       .then(d => {
         if (d.error) throw new Error(d.detail || d.error);
         setData(d);
