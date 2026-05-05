@@ -5,6 +5,7 @@ import type { BirthInput } from '@/lib/astrology/types';
 import type { BGPrescription } from '@/lib/agent/prescriptionTypes';
 import { PRESCRIPTION_FIELDS } from '@/lib/agent/prescriptionTypes';
 import type { Citation } from '@/lib/types';
+import FieldExplainer from './FieldExplainer';
 
 const FIELD_LABELS: Record<keyof BGPrescription, { en: string; hi: string }> = {
   'Anjaan':                    { en: 'Anjaan (अनजान — donate to strangers)', hi: 'अनजान' },
@@ -50,6 +51,7 @@ interface ApiResp {
 export default function PrescriptionTable({ input, lang }: Props) {
   const [data, setData] = useState<ApiResp | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [openField, setOpenField] = useState<keyof BGPrescription | null>(null);
 
   useEffect(() => {
     setData(null);
@@ -112,24 +114,53 @@ export default function PrescriptionTable({ input, lang }: Props) {
 
   return (
     <div className="space-y-6">
+      <p className="text-xs text-ink-mute italic">
+        {lang === 'hi'
+          ? 'किसी भी पंक्ति पर क्लिक करें — ब्रजेश जी की रिकॉर्डेड शिक्षाओं से व्याख्या आएगी।'
+          : "Click any row to see why — explanation drawn from Brajesh ji's recorded teachings."}
+      </p>
       <div className="overflow-hidden border border-ink-line/40">
         <table className="w-full text-sm">
           <tbody>
-            {PRESCRIPTION_FIELDS.map(key => (
-              <tr key={key} className="border-b border-ink-line/20 last:border-0 hover:bg-paper-deep/30">
-                <th
-                  scope="row"
-                  className="py-2.5 px-4 align-top text-left font-medium text-ink-soft w-[42%] bg-paper-deep/40"
-                >
-                  {FIELD_LABELS[key][lang]}
-                </th>
-                <td className="py-2.5 px-4 align-top text-ink whitespace-pre-wrap">
-                  {prescription[key]
-                    ? <span>{prescription[key]}</span>
-                    : <span className="text-ink-mute italic">—</span>}
-                </td>
-              </tr>
-            ))}
+            {PRESCRIPTION_FIELDS.map(key => {
+              const isOpen = openField === key;
+              return (
+                <>
+                  <tr
+                    key={key}
+                    onClick={() => setOpenField(isOpen ? null : key)}
+                    className={`border-b border-ink-line/20 cursor-pointer transition-colors ${
+                      isOpen ? 'bg-paper-deep/40' : 'hover:bg-paper-deep/30'
+                    }`}
+                  >
+                    <th
+                      scope="row"
+                      className="py-2.5 px-4 align-top text-left font-medium text-ink-soft w-[42%] bg-paper-deep/40 select-none"
+                    >
+                      <span className="inline-block w-3 mr-2 text-ink-mute">{isOpen ? '▾' : '▸'}</span>
+                      {FIELD_LABELS[key][lang]}
+                    </th>
+                    <td className="py-2.5 px-4 align-top text-ink whitespace-pre-wrap">
+                      {prescription[key]
+                        ? <span>{prescription[key]}</span>
+                        : <span className="text-ink-mute italic">—</span>}
+                    </td>
+                  </tr>
+                  {isOpen && (
+                    <tr key={`${key}-detail`} className="border-b border-ink-line/20">
+                      <td colSpan={2} className="py-5 px-6 bg-paper-deep/20">
+                        <FieldExplainer
+                          field={key}
+                          recommendedValue={prescription[key]}
+                          input={input}
+                          lang={lang}
+                        />
+                      </td>
+                    </tr>
+                  )}
+                </>
+              );
+            })}
           </tbody>
         </table>
       </div>
