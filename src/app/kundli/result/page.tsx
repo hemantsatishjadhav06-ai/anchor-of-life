@@ -92,7 +92,13 @@ function ResultInner() {
     }
   }, [router, lang]);
 
-  if (!chart || !input) {
+  // ALL hooks must run on every render — never call hooks after a conditional return.
+  const activeChart = useMemo(
+    () => (chart ? chartForTab(tab, chart, system, bhavaChalit) : null),
+    [tab, chart, system, bhavaChalit],
+  );
+
+  if (!chart || !input || !activeChart) {
     return (
       <>
         <Header lang={lang} />
@@ -104,7 +110,6 @@ function ResultInner() {
     );
   }
 
-  const activeChart = useMemo(() => chartForTab(tab, chart, system, bhavaChalit), [tab, chart, system, bhavaChalit]);
   const cusps = system === 'kp' && tab !== 'compare' ? chart.kp?.cusps : undefined;
   const showSystem = tab === 'overview' || tab === 'compare';
   const tabTitle = TAB_LABELS[tab][lang];
