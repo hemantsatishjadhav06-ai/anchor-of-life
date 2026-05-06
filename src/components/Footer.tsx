@@ -14,8 +14,16 @@ export default function Footer({ lang }: { lang: Lang }) {
           <p className="mt-4 text-sm text-ink-mute leading-relaxed max-w-xs">
             {lang === 'hi'
               ? 'श्री ब्रजेश गौतम जी की रिकॉर्डेड शिक्षाओं का संग्रह — स्वतंत्र, निःशुल्क, सदा उपलब्ध।'
-              : 'A digital archive of Shri Brajesh Gautam ji’s recorded teachings — open, free, always available.'}
+              : "A digital archive of Shri Brajesh Gautam ji's recorded teachings — open, free, always available."}
           </p>
+          <a
+            href="https://anchoroflife.com"
+            target="_blank"
+            rel="noopener"
+            className="mt-5 inline-flex items-center gap-1.5 text-[0.78rem] font-bold tracking-[0.1em] uppercase text-ink border border-ink/25 px-3 py-1.5 hover:border-vermilion hover:text-vermilion transition-colors"
+          >
+            anchoroflife.com <span className="text-[0.9em]">↗</span>
+          </a>
         </div>
         <div>
           <p className="citation-meta mb-3">{lang === 'hi' ? 'खोजें' : 'Explore'}</p>
@@ -34,11 +42,14 @@ export default function Footer({ lang }: { lang: Lang }) {
           </ul>
         </div>
       </div>
-      <div className="max-w-wide mx-auto px-6 md:px-10 pb-8">
-        <p className="text-xs text-ink-mute">
+      <div className="max-w-wide mx-auto px-6 md:px-10 pb-8 flex flex-wrap items-center justify-between gap-4">
+        <p className="text-xs text-ink-mute max-w-prose">
           {lang === 'hi'
             ? 'उत्तर ब्रजेश जी की रिकॉर्डेड शिक्षाओं से लिए जाते हैं। शिक्षाएँ © ब्रजेश गौतम। यह स्थल सदाबहार रहे — यही हमारा संकल्प।'
-            : 'Answers are drawn from Brajesh ji’s recorded teachings. Teachings © Brajesh Gautam. May this site outlast all of us — that is the intention.'}
+            : "Answers are drawn from Brajesh ji's recorded teachings. Teachings © Brajesh Gautam. May this site outlast all of us — that is the intention."}
+        </p>
+        <p className="text-[0.72rem] font-bold tracking-[0.14em] uppercase text-ink-mute">
+          {lang === 'hi' ? '© ब्रजेश गौतम' : '© Brajesh Gautam'}
         </p>
       </div>
     </footer>

@@ -40,12 +40,21 @@ export default function Hero({ lang, stats }: { lang: Lang; stats: { videos: num
             <SearchBox lang={lang} autoFocus />
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.8rem] text-ink uppercase tracking-[0.14em] font-bold">
-            <span>~{stats.hours} {lang === 'hi' ? 'घंटे' : 'hours'}</span>
-            <span className="text-ink-line">/</span>
-            <span>{stats.videos} {lang === 'hi' ? 'शिक्षाएँ' : 'teachings'}</span>
-            <span className="text-ink-line">/</span>
-            <span className="font-devanagari normal-case tracking-normal text-ink">हिंदी &amp; English</span>
+          <div className="mt-10 flex flex-wrap items-stretch gap-px border border-ink/15 w-fit">
+            <div className="flex flex-col px-5 py-3 bg-paper-deep/60">
+              <span className="text-[1.9rem] md:text-[2.1rem] font-bold text-ink leading-none tabular-nums">~{stats.hours}</span>
+              <span className="mt-1.5 text-[0.62rem] uppercase tracking-[0.14em] font-bold text-ink-mute">{lang === 'hi' ? 'घंटे' : 'hours'}</span>
+            </div>
+            <div className="w-px bg-ink/10 self-stretch" />
+            <div className="flex flex-col px-5 py-3 bg-paper-deep/60">
+              <span className="text-[1.9rem] md:text-[2.1rem] font-bold text-ink leading-none tabular-nums">{stats.videos}</span>
+              <span className="mt-1.5 text-[0.62rem] uppercase tracking-[0.14em] font-bold text-ink-mute">{lang === 'hi' ? 'शिक्षाएँ' : 'teachings'}</span>
+            </div>
+            <div className="w-px bg-ink/10 self-stretch" />
+            <div className="flex flex-col px-5 py-3 bg-paper-deep/60">
+              <span className="text-[1.9rem] md:text-[2.1rem] font-devanagari font-bold text-ink leading-none">हि · En</span>
+              <span className="mt-1.5 text-[0.62rem] uppercase tracking-[0.14em] font-bold text-ink-mute">{lang === 'hi' ? 'भाषाएँ' : 'languages'}</span>
+            </div>
           </div>
         </div>
 

@@ -55,22 +55,27 @@ export default function LifeSituationCards({ lang }: { lang: Lang }) {
           {lang === 'hi' ? 'जीवन के आठ प्रसंग, उनकी शिक्षाओं से सजे' : 'Eight life situations, drawn from his teachings'}
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-2">
-        {cards.map(c => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-0">
+        {cards.map((c, idx) => (
           <Link key={c.slug} href={`/topic/${c.slug}?lang=${lang}`} className="card-quiet group">
-            <div className="flex items-baseline justify-between gap-3">
-              <p className="font-display text-[1.6rem] leading-tight text-ink font-medium group-hover:text-vermilion transition-colors">
-                {lang === 'hi' ? c.label_hi : c.label_en}
-              </p>
-              <span className="citation-meta whitespace-nowrap mt-1 text-ink-soft">
-                {c.video_count}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <span className="block text-[0.68rem] font-bold tracking-[0.18em] uppercase text-ink-mute mb-1.5">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+                <p className="font-display text-[1.55rem] leading-tight text-ink font-medium group-hover:text-vermilion transition-colors">
+                  {lang === 'hi' ? c.label_hi : c.label_en}
+                </p>
+              </div>
+              <span className="mt-7 text-[0.7rem] font-bold tracking-[0.12em] uppercase text-ink-line whitespace-nowrap bg-paper-deep px-1.5 py-0.5">
+                {c.video_count} {lang === 'hi' ? 'शिक्षाएँ' : 'talks'}
               </span>
             </div>
-            <p className="mt-2.5 text-[0.95rem] text-ink-soft leading-relaxed font-medium">
+            <p className="mt-2.5 text-[0.92rem] text-ink-soft leading-relaxed font-medium">
               {lang === 'hi' ? c.description_hi : c.description_en}
             </p>
             {c.top_concepts.length > 0 && (
-              <p className="mt-3 text-[0.8rem] text-ink-mute italic line-clamp-1 font-medium">
+              <p className="mt-3 text-[0.78rem] text-ink-mute italic line-clamp-1">
                 {c.top_concepts.slice(0, 3).join(' · ')}
               </p>
             )}

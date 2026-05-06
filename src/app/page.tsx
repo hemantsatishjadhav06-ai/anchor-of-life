@@ -26,27 +26,36 @@ export default function HomePage({ searchParams }: { searchParams: { lang?: stri
       <main className="max-w-wide mx-auto px-6 md:px-10 pb-16">
         <Hero lang={lang} stats={stats} />
 
-        {/* Kundli tool teaser — new feature surfaced prominently */}
-        <section className="border-t border-ink-line/60 pt-10 mt-12">
-          <div className="grid md:grid-cols-[1fr_auto] gap-6 items-end">
-            <div>
-              <p className="citation-meta mb-3">{lang === 'hi' ? 'नया उपकरण' : 'New tool'}</p>
-              <h2 className="font-display text-3xl md:text-4xl text-ink leading-tight tracking-tighter-display">
-                {lang === 'hi' ? (
-                  <span className="font-devanagari font-medium">अपनी कुंडली का विश्लेषण करें</span>
-                ) : (
-                  <>Get your <em className="text-vermilion italic font-light">kundli</em> read.</>
-                )}
-              </h2>
-              <p className="mt-3 text-ink leading-relaxed font-medium max-w-prose">
-                {lang === 'hi'
-                  ? 'जन्म तिथि, समय और स्थान दर्ज करें। ग्रह स्थिति, दोष पहचान, और 20-क्षेत्र परामर्श प्रारूप — विश्व के किसी भी स्थान पर।'
-                  : "Date, time, and place of birth — anywhere in the world. Get planet positions, dosha detection, and Brajesh ji's 20-field consultation prescription."}
-              </p>
+        {/* Kundli tool teaser — flagship feature, visually separated */}
+        <section className="mt-12">
+          <div className="bg-paper-deep border-t-2 border-vermilion px-6 md:px-8 py-8 md:py-10">
+            <div className="grid md:grid-cols-[1fr_auto] gap-6 items-end">
+              <div>
+                <p className="citation-meta mb-3 text-vermilion">{lang === 'hi' ? 'ज्योतिष उपकरण' : 'Jyotish tool'}</p>
+                <h2 className="font-display text-3xl md:text-4xl text-ink leading-tight tracking-tighter-display">
+                  {lang === 'hi' ? (
+                    <span className="font-devanagari font-medium">अपनी कुंडली का विश्लेषण करें</span>
+                  ) : (
+                    <>Get your <em className="text-vermilion italic font-light">kundli</em> read.</>
+                  )}
+                </h2>
+                <p className="mt-3 text-ink-soft leading-relaxed font-medium max-w-prose">
+                  {lang === 'hi'
+                    ? 'जन्म तिथि, समय और स्थान दर्ज करें। ग्रह स्थिति, दोष पहचान, और 27-क्षेत्र परामर्श प्रारूप — विश्व के किसी भी स्थान पर।'
+                    : "Date, time, and place of birth — anywhere in the world. Planet positions, dosha detection, and Brajesh ji's 27-field consultation prescription."}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-4 text-[0.78rem] text-ink-mute uppercase tracking-[0.12em] font-bold">
+                  <span>{lang === 'hi' ? 'D1 · D9 · D10 · D12 चार्ट' : 'D1 · D9 · D10 · D12 charts'}</span>
+                  <span className="text-ink-line">·</span>
+                  <span>{lang === 'hi' ? 'दशा विश्लेषण' : 'Dasha analysis'}</span>
+                  <span className="text-ink-line">·</span>
+                  <span>{lang === 'hi' ? 'दोष पहचान' : 'Dosha detection'}</span>
+                </div>
+              </div>
+              <a href={`/kundli?lang=${lang}`} className="btn-ink whitespace-nowrap self-start md:self-end mt-2">
+                {lang === 'hi' ? 'कुंडली बनाएँ' : 'Generate Kundli'} →
+              </a>
             </div>
-            <a href={`/kundli?lang=${lang}`} className="btn-ink whitespace-nowrap self-start md:self-end">
-              {lang === 'hi' ? 'कुंडली बनाएँ' : 'Generate Kundli'} →
-            </a>
           </div>
         </section>
 
