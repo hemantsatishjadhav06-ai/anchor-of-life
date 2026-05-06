@@ -1,9 +1,8 @@
 import Database from 'better-sqlite3';
 import * as sqliteVec from 'sqlite-vec';
-import path from 'node:path';
 import fs from 'node:fs';
-
-const DB_PATH = process.env.DB_PATH ?? path.join(process.cwd(), 'data', 'anchor.db');
+import path from 'node:path';
+import { DB_PATH } from './env';
 
 let _db: Database.Database | null = null;
 

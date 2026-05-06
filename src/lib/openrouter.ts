@@ -1,22 +1,20 @@
 // OpenRouter client — embeddings + chat completions.
 // Single key, multiple model providers.
 
-const BASE_URL = process.env.OPENROUTER_BASE_URL ?? 'https://openrouter.ai/api/v1';
-const KEY = process.env.OPENROUTER_API_KEY;
-const SITE_URL = process.env.SITE_URL ?? 'http://localhost:3000';
-const SITE_NAME = process.env.SITE_NAME ?? 'Anchor of Life';
+import { OPENROUTER_API_KEY, OPENROUTER_BASE_URL, SITE_URL, SITE_NAME, COMPOSER_MODEL, EMBEDDING_MODEL } from './env';
+
+const BASE_URL = OPENROUTER_BASE_URL;
 
 function headers() {
-  if (!KEY) throw new Error('OPENROUTER_API_KEY is not set');
   return {
-    'Authorization': `Bearer ${KEY}`,
+    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
     'Content-Type': 'application/json',
     'HTTP-Referer': SITE_URL,
     'X-Title': SITE_NAME,
   };
 }
 
-export async function embed(texts: string[], model = process.env.EMBEDDING_MODEL ?? 'openai/text-embedding-3-small'): Promise<number[][]> {
+export async function embed(texts: string[], model = EMBEDDING_MODEL): Promise<number[][]> {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 60_000);
   try {
@@ -45,7 +43,7 @@ export async function chat(messages: ChatMessage[], opts: {
   max_tokens?: number;
   response_format?: { type: 'json_object' };
 } = {}): Promise<string> {
-  const model = opts.model ?? process.env.COMPOSER_MODEL ?? 'anthropic/claude-sonnet-4.5';
+  const model = opts.model ?? COMPOSER_MODEL;
   const r = await fetch(`${BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: headers(),

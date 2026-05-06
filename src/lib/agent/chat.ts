@@ -2,6 +2,7 @@
 
 import { hybridSearch, buildCitationsFromVideos } from '@/lib/search';
 import { chat as openrouterChat } from '@/lib/openrouter';
+import { COMPOSER_MODEL } from '@/lib/env';
 import type { AnswerEnvelope, Lang } from '@/lib/types';
 import type { FullChart } from '@/lib/astrology/types';
 import { chartContextFor } from './chartContext';
@@ -60,7 +61,7 @@ export async function generateChatReply(
     },
   ];
 
-  const model = process.env.COMPOSER_MODEL ?? 'anthropic/claude-sonnet-4.5';
+  const model = COMPOSER_MODEL;
   const raw = await openrouterChat(messages, {
     model,
     temperature: 0.4,

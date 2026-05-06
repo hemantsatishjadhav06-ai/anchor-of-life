@@ -18,16 +18,12 @@
  * storage fee.
  */
 import './_env';
+import { R2_ACCOUNT_ID as ACC, R2_BUCKET as BKT, R2_ACCESS_KEY_ID as KEY, R2_SECRET_ACCESS_KEY as SEC } from '../src/lib/env';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
-
-const ACC  = process.env.R2_ACCOUNT_ID;
-const BKT  = process.env.R2_BUCKET ?? 'anchoroflife';
-const KEY  = process.env.R2_ACCESS_KEY_ID;
-const SEC  = process.env.R2_SECRET_ACCESS_KEY;
 
 if (!ACC || !KEY || !SEC) {
   console.error('Missing R2 env vars. See scripts/upload-to-r2.ts header for setup.');

@@ -9,22 +9,23 @@
  * Self-healing: if all sources fail, exits non-zero.
  */
 import './_env';
+import {
+  DB_PATH,
+  DB_DOWNLOAD_URL as DOWNLOAD_URL,
+  R2_ACCOUNT_ID as ACC,
+  R2_BUCKET as BKT,
+  R2_ACCESS_KEY_ID as KEY,
+  R2_SECRET_ACCESS_KEY as SEC,
+  GH_REPO,
+  GH_RELEASE,
+  GH_ASSET,
+} from '../src/lib/env';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { pipeline } from 'node:stream/promises';
 import { Readable } from 'node:stream';
 import { createGunzip } from 'node:zlib';
-
-const DB_PATH = process.env.DB_PATH ?? path.join(process.cwd(), 'data', 'anchor.db');
-const DOWNLOAD_URL = process.env.DB_DOWNLOAD_URL;
-const ACC = process.env.R2_ACCOUNT_ID;
-const BKT = process.env.R2_BUCKET ?? 'anchoroflife';
-const KEY = process.env.R2_ACCESS_KEY_ID;
-const SEC = process.env.R2_SECRET_ACCESS_KEY;
-const GH_REPO = process.env.GH_REPO ?? 'hemantsatishjadhav06-ai/anchor-of-life';
-const GH_RELEASE = process.env.GH_RELEASE ?? 'v0.1-data';
-const GH_ASSET = process.env.GH_ASSET ?? 'anchor.db.gz';
 
 async function downloadHttp(url: string, localPath: string, gunzip = false) {
   console.log(`fetching ${url}…`);

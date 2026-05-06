@@ -4,6 +4,7 @@
 
 import { hybridSearch, buildCitationsFromVideos } from '@/lib/search';
 import { chat } from '@/lib/openrouter';
+import { COMPOSER_MODEL } from '@/lib/env';
 import type { AnswerEnvelope, Citation, Lang } from '@/lib/types';
 import type { FullChart, PlanetName } from '@/lib/astrology/types';
 import type { BGPrescription } from './prescriptionTypes';
@@ -175,7 +176,7 @@ Compose a 2-paragraph explanation per the system instructions. Lead with what th
 
 Return ONLY the JSON object.`;
 
-  const model = process.env.COMPOSER_MODEL ?? 'anthropic/claude-sonnet-4.5';
+  const model = COMPOSER_MODEL;
   let envelope: AnswerEnvelope;
 
   if (citations.length === 0) {

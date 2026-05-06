@@ -1,4 +1,5 @@
 import { chat } from './openrouter';
+import { COMPOSER_MODEL } from './env';
 import type { AnswerEnvelope, Citation, Lang } from './types';
 
 const SYSTEM_PROMPT = `You are the editor of "Anchor of Life" — a digital archive of Brajesh Gautam ji's recorded teachings. Your job is to compose answers grounded EXCLUSIVELY in the source excerpts you are given.
@@ -109,7 +110,7 @@ Language for the answer: ${c.language === 'hi' ? 'Hindi (Devanagari script)' : '
 }
 
 export async function composeFolio(input: ComposeInput): Promise<AnswerEnvelope> {
-  const model = process.env.COMPOSER_MODEL ?? 'anthropic/claude-sonnet-4.5';
+  const model = COMPOSER_MODEL;
   const raw = await chat([
     { role: 'system', content: SYSTEM_PROMPT },
     { role: 'user', content: buildUserPrompt(input) },

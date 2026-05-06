@@ -3,6 +3,7 @@
 
 import { hybridSearch, buildCitationsFromVideos } from '@/lib/search';
 import { chat } from '@/lib/openrouter';
+import { COMPOSER_MODEL } from '@/lib/env';
 import type { AnswerEnvelope, Lang } from '@/lib/types';
 import type { FullChart } from '@/lib/astrology/types';
 import { chartContextFor, probeQueryFor, type TabKey } from './chartContext';
@@ -57,7 +58,7 @@ Compose the 3-paragraph reading per the system instructions. Aim for 220–380 w
 
 Language for the answer: ${language === 'hi' ? 'Hindi (Devanagari script)' : 'English'}.`;
 
-  const model = process.env.COMPOSER_MODEL ?? 'anthropic/claude-sonnet-4.5';
+  const model = COMPOSER_MODEL;
   const raw = await chat(
     [
       { role: 'system', content: READING_SYSTEM_PROMPT },

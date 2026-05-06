@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Fraunces, Noto_Serif_Devanagari, Mukta } from 'next/font/google';
+import { SITE_URL } from '@/lib/env';
 import './globals.css';
 
 const display = Fraunces({
@@ -29,7 +30,7 @@ const sans = Mukta({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Anchor of Life · Brajesh Gautam',
     template: '%s · Anchor of Life',

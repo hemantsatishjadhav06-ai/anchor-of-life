@@ -3,6 +3,7 @@
 
 import { hybridSearch, buildCitationsFromVideos } from '@/lib/search';
 import { chat } from '@/lib/openrouter';
+import { COMPOSER_MODEL } from '@/lib/env';
 import type { Citation, Lang } from '@/lib/types';
 import type { FullChart } from '@/lib/astrology/types';
 import { chartContextFor } from './chartContext';
@@ -118,7 +119,7 @@ ${sources}
 
 Fill the entire 27-field prescription JSON per the system instructions. Return ONLY the JSON object — no markdown, no preamble, nothing outside the braces.`;
 
-  const model = process.env.COMPOSER_MODEL ?? 'anthropic/claude-sonnet-4.5';
+  const model = COMPOSER_MODEL;
   const raw = await chat(
     [
       { role: 'system', content: SYSTEM_PROMPT },
