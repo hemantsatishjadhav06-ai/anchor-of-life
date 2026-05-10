@@ -6,7 +6,9 @@ function req(key: string): string {
   return v;
 }
 
-export const OPENROUTER_API_KEY = req('OPENROUTER_API_KEY');
+export function OPENROUTER_API_KEY(): string {
+  return req('OPENROUTER_API_KEY');
+}
 
 export const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL ?? 'https://openrouter.ai/api/v1';
 export const SITE_URL = process.env.SITE_URL ?? 'http://localhost:3000';

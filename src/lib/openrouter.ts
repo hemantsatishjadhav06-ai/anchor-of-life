@@ -7,7 +7,7 @@ const BASE_URL = OPENROUTER_BASE_URL;
 
 function headers() {
   return {
-    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+    'Authorization': `Bearer ${OPENROUTER_API_KEY()}`,
     'Content-Type': 'application/json',
     'HTTP-Referer': SITE_URL,
     'X-Title': SITE_NAME,
