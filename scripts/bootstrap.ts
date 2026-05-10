@@ -76,7 +76,8 @@ async function main() {
   const attempts: Array<{ name: string; fn: () => Promise<void> }> = [];
 
   if (DOWNLOAD_URL) {
-    attempts.push({ name: 'DB_DOWNLOAD_URL', fn: () => downloadHttp(DOWNLOAD_URL, DB_PATH, DOWNLOAD_URL.endsWith('.gz')) });
+    const url = DOWNLOAD_URL;
+    attempts.push({ name: 'DB_DOWNLOAD_URL', fn: () => downloadHttp(url, DB_PATH, url.endsWith('.gz')) });
   }
   if (ACC && KEY && SEC) {
     attempts.push({ name: 'Cloudflare R2', fn: () => downloadFromR2('anchor.db', DB_PATH) });
